@@ -308,7 +308,7 @@ export default function PharmacyDetailPage({
   return (
     <div className="min-h-svh bg-background">
       {/* Header */}
-      <div className="relative bg-gradient-to-br from-primary via-primary/90 to-primary/80 px-6 pt-12 pb-6">
+      <div className="relative overflow-hidden bg-gradient-to-br from-primary via-primary/90 to-primary/80 px-6 pt-12 pb-6">
         <div className="absolute top-0 right-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full bg-white/10" />
         <button
           onClick={() => router.back()}

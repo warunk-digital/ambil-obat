@@ -101,8 +101,8 @@ export default function HomePage() {
   return (
     <div className="min-h-svh bg-background">
       {/* Hero Header */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-primary via-primary/90 to-primary/80 px-6 pt-12 pb-8">
-        {/* Background decoration */}
+      <div className="relative overflow-hidden rounded-b-[2rem] bg-gradient-to-br from-primary via-primary/90 to-primary/80 px-6 pb-8 pt-12 text-primary-foreground shadow-lg">
+        {/* Decorative circles */}
         <div className="absolute top-0 right-0 h-40 w-40 translate-x-10 -translate-y-10 rounded-full bg-white/10" />
         <div className="absolute bottom-0 left-0 h-28 w-28 -translate-x-8 translate-y-8 rounded-full bg-white/5" />
 
