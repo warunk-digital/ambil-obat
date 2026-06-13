@@ -268,7 +268,7 @@ export default function HomePage() {
 
       {/* Not logged in CTA */}
       {!authLoading && !user && (
-        <div className="fixed right-0 bottom-0 left-0 z-40 border-t border-border/60 bg-card/95 px-6 py-4 backdrop-blur-xl pb-safe">
+        <div className="fixed right-0 bottom-0 left-0 z-40 border-t border-border/60 bg-card/95 px-6 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-xl">
           <Link
             href="/login"
             className="flex h-12 w-full items-center justify-center rounded-2xl bg-primary text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:shadow-xl"
