@@ -20,7 +20,7 @@ export default function OrdersPage() {
   const { user } = useAuth();
   const [requests, setRequests] = useState<DeliveryRequest[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<"active" | "completed" | "all">("active");
+  const [filter, setFilter] = useState<"active" | "completed" | "cancelled" | "all">("active");
 
   useEffect(() => {
     if (!user) return;
