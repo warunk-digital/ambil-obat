@@ -215,15 +215,15 @@ export default function RegisterPage() {
             </form>
           </div>
 
-          <p className="mt-6 text-center text-sm text-muted-foreground">
-            Sudah punya akun?{" "}
+          <div className="mt-6 text-center text-sm relative z-10">
+            <span className="text-muted-foreground">Sudah punya akun?</span>{" "}
             <Link
               href="/login"
-              className="font-semibold text-primary transition-colors hover:text-primary/80"
+              className="inline-block p-2 -m-2 font-semibold text-primary transition-colors hover:text-primary/80"
             >
               Masuk di sini
             </Link>
-          </p>
+          </div>
         </div>
       </div>
     </div>
