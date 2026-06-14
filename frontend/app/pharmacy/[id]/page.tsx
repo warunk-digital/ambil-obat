@@ -28,7 +28,6 @@ import {
   CheckCircle2,
   AlertCircle,
   Truck,
-  User,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LocationSearch } from "@/components/location-search";
@@ -58,11 +57,6 @@ export default function PharmacyDetailPage({
   const [notes, setNotes] = useState("");
   const [error, setError] = useState("");
   const [showAddressForm, setShowAddressForm] = useState(false);
-
-  // Guest form state
-  const [guestName, setGuestName] = useState("");
-  const [guestPhone, setGuestPhone] = useState("");
-  const [guestAddress, setGuestAddress] = useState("");
 
   // New address form
   const [newAddressLabel, setNewAddressLabel] = useState("Rumah");
@@ -201,41 +195,14 @@ export default function PharmacyDetailPage({
     }
   };
 
-  const handleGuestSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
-    if (!medicineNumber.trim() || !guestName.trim() || !guestAddress.trim()) {
-      setError("Mohon lengkapi semua data wajib");
-      return;
-    }
-
-    if (!pharmacy?.phone) {
-      setError("Nomor WhatsApp apotek tidak tersedia");
-      return;
-    }
-
-    const phone = pharmacy.phone.startsWith("0") 
-      ? "62" + pharmacy.phone.slice(1) 
-      : pharmacy.phone;
-
-    let message = `Halo ${pharmacy.name},\nSaya ingin *Pesan Antar Obat* (Guest Order):\n\n`;
-    message += `*Nama:* ${guestName.trim()}\n`;
-    if (guestPhone.trim()) message += `*No. HP:* ${guestPhone.trim()}\n`;
-    message += `*Nomor Obat:* ${medicineNumber.trim()}\n`;
-    if (medicineDescription.trim()) message += `*Deskripsi Obat:* ${medicineDescription.trim()}\n`;
-    message += `*Alamat Pengiriman:* ${guestAddress.trim()}\n`;
-    if (notes.trim()) message += `*Catatan:* ${notes.trim()}`;
-
-    const waUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-    window.open(waUrl, "_blank");
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
-    if (!user) return;
+    if (!user) {
+      router.push(`/login?redirect=/pharmacy/${id}`);
+      return;
+    }
 
     if (!medicineNumber.trim()) {
       setError("Nomor obat wajib diisi");
@@ -395,40 +362,7 @@ export default function PharmacyDetailPage({
             Masukkan nomor obat yang sudah siap diambil di apotek
           </p>
 
-          <form onSubmit={user ? handleSubmit : handleGuestSubmit} className="space-y-5">
-            {!user && (
-              <>
-                <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-sm font-medium">
-                    <User className="h-4 w-4 text-primary" />
-                    Nama Pemesan <span className="text-destructive">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={guestName}
-                    onChange={(e) => setGuestName(e.target.value)}
-                    placeholder="Nama lengkap Anda"
-                    required
-                    className="flex h-12 w-full rounded-xl border border-input bg-card px-4 text-sm shadow-sm transition-colors placeholder:text-muted-foreground/50 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-sm font-medium">
-                    <Phone className="h-4 w-4 text-primary" />
-                    No. WhatsApp
-                    <span className="text-xs font-normal text-muted-foreground">(opsional)</span>
-                  </label>
-                  <input
-                    type="tel"
-                    value={guestPhone}
-                    onChange={(e) => setGuestPhone(e.target.value)}
-                    placeholder="0812xxxxxx"
-                    className="flex h-12 w-full rounded-xl border border-input bg-card px-4 text-sm shadow-sm transition-colors placeholder:text-muted-foreground/50 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
-                  />
-                </div>
-              </>
-            )}
-
+          <form onSubmit={handleSubmit} className="space-y-5">
             {/* Medicine Number */}
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-sm font-medium">
@@ -468,16 +402,7 @@ export default function PharmacyDetailPage({
                 Alamat Pengiriman <span className="text-destructive">*</span>
               </label>
 
-              {!user ? (
-                <textarea
-                  value={guestAddress}
-                  onChange={(e) => setGuestAddress(e.target.value)}
-                  placeholder="Alamat lengkap (No. Rumah, RT/RW, Desa, dll)"
-                  rows={3}
-                  required
-                  className="flex w-full rounded-xl border border-input bg-card px-4 py-3 text-sm shadow-sm transition-colors placeholder:text-muted-foreground/50 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none resize-none"
-                />
-              ) : addresses.length > 0 && !showAddressForm ? (
+              {addresses.length > 0 && !showAddressForm ? (
                 <div className="space-y-2">
                   <div className="relative">
                     <select
@@ -526,44 +451,57 @@ export default function PharmacyDetailPage({
                   </div>
 
                   <div className="space-y-3">
+                    {/* Autocomplete Search */}
                     <div className="space-y-1">
-                      <label className="text-[10px] font-medium text-muted-foreground">Titik Lokasi (Map)</label>
-                      <div className="relative overflow-hidden rounded-xl border border-input">
-                        <MapPicker 
-                          onLocationSelect={(lat, lng) => {
-                            setNewAddressLat(lat);
-                            setNewAddressLng(lng);
-                          }} 
-                        />
-                        <Button
-                          type="button"
-                          variant="secondary"
-                          size="sm"
-                          onClick={handleGetCurrentLocation}
-                          disabled={gettingLocation}
-                          className="absolute bottom-3 right-3 shadow-md"
-                        >
-                          {gettingLocation ? (
-                            <Loader2 className="h-3 w-3 animate-spin mr-1.5" />
-                          ) : (
-                            <Navigation className="h-3 w-3 mr-1.5" />
-                          )}
-                          <span className="text-xs">Lokasi Saat Ini</span>
-                        </Button>
-                      </div>
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-medium text-muted-foreground">Alamat Lengkap</label>
-                      <textarea
-                        value={newAddressFull}
-                        onChange={(e) => setNewAddressFull(e.target.value)}
-                        placeholder="Nama jalan, RT/RW, dsb."
-                        rows={2}
-                        className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-xs placeholder:text-muted-foreground/50 focus:border-primary focus:ring-1 focus:ring-primary/20 focus:outline-none resize-none"
+                      <label className="text-[10px] font-medium text-muted-foreground">Cari Alamat</label>
+                      <LocationSearch 
+                        defaultValue={newAddressFull}
+                        placeholder="Ketik alamat atau nama jalan..."
+                        onSelect={(data) => {
+                          setNewAddressFull(data.address);
+                          setNewAddressLat(data.lat);
+                          setNewAddressLng(data.lng);
+                          setNewAddressKabupaten(data.kabupaten);
+                          setNewAddressKecamatan(data.kecamatan);
+                          setNewAddressDesa(data.desa);
+                        }}
                       />
                     </div>
 
+                    {/* Geolocation Button */}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleGetCurrentLocation}
+                      disabled={gettingLocation}
+                      className="flex items-center justify-center gap-2 h-10 w-full rounded-xl border border-input text-xs font-medium hover:bg-accent/50"
+                    >
+                      {gettingLocation ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <Navigation className="h-3.5 w-3.5 text-primary fill-primary/10" />
+                      )}
+                      {gettingLocation ? "Mendapatkan Lokasi..." : "Gunakan Lokasi Terkini"}
+                    </Button>
+
+                    {/* Map Picker */}
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Titik Koordinat Peta</label>
+                      <MapPicker 
+                        lat={newAddressLat || pharmacy?.latitude || -6.2088}
+                        lng={newAddressLng || pharmacy?.longitude || 106.8456}
+                        onChange={(address, latitude, longitude, kab, kec, dsa) => {
+                          setNewAddressFull(address);
+                          setNewAddressLat(latitude);
+                          setNewAddressLng(longitude);
+                          setNewAddressKabupaten(kab || newAddressKabupaten);
+                          setNewAddressKecamatan(kec || newAddressKecamatan);
+                          setNewAddressDesa(dsa || newAddressDesa);
+                        }}
+                      />
+                    </div>
+
+                    {/* Kabupaten, Kecamatan, Desa */}
                     <div className="grid grid-cols-2 gap-2">
                       <div className="space-y-1">
                         <label className="text-[10px] font-medium text-muted-foreground">Kabupaten/Kota</label>
@@ -604,6 +542,7 @@ export default function PharmacyDetailPage({
                       </div>
                     )}
 
+                    {/* Detail patokan */}
                     <input
                       type="text"
                       value={newAddressDetail}
@@ -612,6 +551,7 @@ export default function PharmacyDetailPage({
                       className="flex h-11 w-full rounded-xl border border-input bg-background px-4 text-sm placeholder:text-muted-foreground/50 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
                     />
 
+                    {/* Action buttons */}
                     <div className="flex gap-2 pt-2">
                       <Button
                         type="button"
@@ -626,6 +566,7 @@ export default function PharmacyDetailPage({
                         variant="outline"
                         onClick={() => {
                           setShowAddressForm(false);
+                          // Reset form states
                           setNewAddressFull("");
                           setNewAddressDetail("");
                           setNewAddressLat(null);
@@ -660,8 +601,8 @@ export default function PharmacyDetailPage({
               />
             </div>
 
-            {/* Delivery Fee Summary - ONLY SHOW FOR LOGGED IN USERS OR IF WE CAN CALCULATE */}
-            {user && deliveryFee != null && (
+            {/* Delivery Fee Summary */}
+            {deliveryFee != null && (
               <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-sm">
@@ -681,7 +622,7 @@ export default function PharmacyDetailPage({
             )}
 
             {/* Radius warning */}
-            {user && !isWithinRadius && (
+            {!isWithinRadius && (
               <div className="flex items-center gap-3 rounded-xl bg-destructive/10 px-4 py-3">
                 <AlertCircle className="h-4 w-4 shrink-0 text-destructive" />
                 <p className="text-xs text-destructive">
@@ -701,16 +642,11 @@ export default function PharmacyDetailPage({
             {/* Submit */}
             <Button
               type="submit"
-              className={cn(
-                "h-12 w-full rounded-2xl text-sm font-semibold shadow-lg",
-                !user ? "bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/20" : "shadow-primary/20"
-              )}
-              disabled={submitting || !isOpen || (user && !isWithinRadius)}
+              className="h-12 w-full rounded-2xl text-sm font-semibold shadow-lg shadow-primary/20"
+              disabled={submitting || !isOpen || !isWithinRadius}
             >
               {submitting ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : !user ? (
-                <Phone className="mr-2 h-4 w-4" />
               ) : (
                 <Truck className="mr-2 h-4 w-4" />
               )}
@@ -718,9 +654,7 @@ export default function PharmacyDetailPage({
                 ? "Apotek Sedang Tutup"
                 : submitting
                   ? "Mengirim Request..."
-                  : !user 
-                    ? "Pesan Instan via WhatsApp" 
-                    : "Request Antar Obat"}
+                  : "Request Antar Obat"}
             </Button>
           </form>
         </div>

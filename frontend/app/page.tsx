@@ -203,7 +203,7 @@ export default function HomePage() {
               return (
                 <Link
                   key={pharmacy.id}
-                  href={`/pharmacy/${pharmacy.id}`}
+                  href={user ? `/pharmacy/${pharmacy.id}` : `/login?redirect=/pharmacy/${pharmacy.id}`}
                   className={cn(
                     "group flex items-center gap-4 rounded-2xl border border-border/50 bg-card p-4 shadow-sm transition-all duration-200 touch-active",
                     "hover:border-primary/30 hover:shadow-md hover:shadow-primary/5",

@@ -64,6 +64,7 @@ export default function AdminSettingsPage() {
     const { error } = await supabase
       .from("pharmacies")
       .update({
+        name: pharmacy.name,
         delivery_radius_km: pharmacy.delivery_radius_km,
         delivery_fee_base: pharmacy.delivery_fee_base,
         delivery_fee_per_km: pharmacy.delivery_fee_per_km,
@@ -129,10 +130,44 @@ export default function AdminSettingsPage() {
       <div className="mx-auto max-w-2xl">
         <form onSubmit={handleSubmit} className="space-y-6">
           
-          {/* Status Apotek */}
+          {/* Profil Apotek */}
           <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
             <div className="mb-4 flex items-center gap-2">
               <Store className="h-5 w-5 text-primary" />
+              <h2 className="text-lg font-semibold">Profil Apotek</h2>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Nama Apotek</label>
+                <input
+                  type="text"
+                  value={pharmacy.name || ""}
+                  onChange={(e) => setPharmacy({ ...pharmacy, name: e.target.value })}
+                  placeholder="Contoh: Apotek Sehat"
+                  className="h-11 w-full rounded-xl border border-input bg-background px-4 text-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Nomor WhatsApp Apotek</label>
+                <input
+                  type="tel"
+                  value={pharmacy.phone || ""}
+                  onChange={(e) => setPharmacy({ ...pharmacy, phone: e.target.value })}
+                  placeholder="Contoh: 08123456789"
+                  className="h-11 w-full rounded-xl border border-input bg-background px-4 text-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
+                />
+                <p className="text-xs text-muted-foreground">Nomor ini akan dihubungi oleh pasien.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Status Apotek */}
+          <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
+            <div className="mb-4 flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-primary" />
               <h2 className="text-lg font-semibold">Status Operasional</h2>
             </div>
             
@@ -152,18 +187,6 @@ export default function AdminSettingsPage() {
                 <div className="absolute left-1 top-1 h-6 w-6 rounded-full bg-white transition-transform peer-checked:translate-x-6"></div>
               </div>
             </label>
-
-            <div className="mt-4 border-t border-border/50 pt-4">
-              <label className="text-sm font-medium mb-2 block">Nomor WhatsApp Apotek</label>
-              <input
-                type="tel"
-                value={pharmacy.phone || ""}
-                onChange={(e) => setPharmacy({ ...pharmacy, phone: e.target.value })}
-                placeholder="Contoh: 08123456789"
-                className="h-11 w-full rounded-xl border border-input bg-background px-4 text-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
-              />
-              <p className="mt-1 text-xs text-muted-foreground">Nomor ini akan dihubungi oleh pasien.</p>
-            </div>
           </div>
 
           {/* Jam Operasional */}
