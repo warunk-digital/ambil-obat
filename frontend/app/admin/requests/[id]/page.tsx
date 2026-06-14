@@ -20,7 +20,8 @@ import {
   Package,
   Clock,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  Navigation
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import RouteMap from "@/components/route-map";
@@ -150,6 +151,12 @@ export default function AdminRequestDetailPage({ params }: { params: Promise<{ i
   const assignCourier = async () => {
     if (!selectedCourier) return;
     updateStatus("courier_assigned");
+  };
+
+  const openGoogleMaps = () => {
+    if (!request?.address?.latitude || !request?.address?.longitude) return;
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${request.address.latitude},${request.address.longitude}`;
+    window.open(url, "_blank");
   };
 
   if (loading) {
@@ -405,6 +412,12 @@ export default function AdminRequestDetailPage({ params }: { params: Promise<{ i
                     userLng={request.address.longitude!}
                     routePoints={routePoints}
                   />
+                  <button 
+                    onClick={openGoogleMaps}
+                    className="mt-3 flex w-full h-10 items-center justify-center rounded-xl font-medium text-primary border border-primary/20 hover:bg-primary/5 transition-colors"
+                  >
+                    <Navigation className="mr-2 h-4 w-4" /> Buka di Google Maps
+                  </button>
                 </div>
               )}
             </div>
