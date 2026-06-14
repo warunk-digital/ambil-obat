@@ -154,10 +154,11 @@ export default function OrdersPage() {
                           {request.request_number}
                         </span>
                         <span
-                          className={cn(
-                            "status-badge rounded-full px-2 py-0.5 text-[10px] font-medium",
-                            statusInfo?.color,
-                          )}
+                          className="status-badge rounded-full px-2 py-0.5 text-[10px] font-medium"
+                          style={{
+                            color: statusInfo?.textColor,
+                            backgroundColor: statusInfo?.bgColor,
+                          }}
                         >
                           {statusInfo?.icon} {statusInfo?.label}
                         </span>

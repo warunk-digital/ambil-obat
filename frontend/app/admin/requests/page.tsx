@@ -137,7 +137,13 @@ export default function AdminRequestsPage() {
                     <div>
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="font-bold text-primary text-base sm:text-sm">{req.request_number}</span>
-                        <span className={cn("rounded-full px-2.5 py-1 text-[10px] font-semibold tracking-wider uppercase", statusInfo.color)}>
+                        <span
+                          className="rounded-full px-2.5 py-1 text-[10px] font-semibold tracking-wider uppercase"
+                          style={{
+                            color: statusInfo.textColor,
+                            backgroundColor: statusInfo.bgColor,
+                          }}
+                        >
                           {statusInfo.icon} {statusInfo.label}
                         </span>
                       </div>

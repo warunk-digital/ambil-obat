@@ -205,10 +205,11 @@ export default function CourierDashboard() {
                   <h3 className="font-semibold">{request.pharmacy?.name || "Apotek"}</h3>
                 </div>
                 <div
-                  className={cn(
-                    "flex items-center rounded-full px-2 py-1 text-[10px] font-medium",
-                    STATUS_CONFIG[request.status]?.color
-                  )}
+                  className="flex items-center rounded-full px-2 py-1 text-[10px] font-medium"
+                  style={{
+                    color: STATUS_CONFIG[request.status]?.textColor,
+                    backgroundColor: STATUS_CONFIG[request.status]?.bgColor,
+                  }}
                 >
                   {STATUS_CONFIG[request.status]?.label}
                 </div>

@@ -121,48 +121,63 @@ export interface PharmacyWithDistance extends Pharmacy {
 // Status display config
 export const STATUS_CONFIG: Record<
   DeliveryStatus,
-  { label: string; color: string; icon: string; description: string }
+  { label: string; color: string; textColor: string; bgColor: string; icon: string; description: string }
 > = {
   pending: {
     label: "Menunggu Konfirmasi",
     color: "text-amber-600 bg-amber-50",
+    textColor: "#d97706",
+    bgColor: "#fffbeb",
     icon: "⏳",
     description: "Apotek belum mengkonfirmasi request Anda",
   },
   confirmed: {
     label: "Dikonfirmasi",
     color: "text-blue-600 bg-blue-50",
+    textColor: "#2563eb",
+    bgColor: "#eff6ff",
     icon: "✅",
     description: "Apotek sudah mengkonfirmasi, menunggu kurir",
   },
   courier_assigned: {
     label: "Kurir Ditugaskan",
     color: "text-indigo-600 bg-indigo-50",
+    textColor: "#4f46e5",
+    bgColor: "#eef2ff",
     icon: "🚴",
     description: "Kurir sudah ditugaskan untuk mengantar obat Anda",
   },
   picked_up: {
     label: "Obat Diambil",
     color: "text-purple-600 bg-purple-50",
+    textColor: "#9333ea",
+    bgColor: "#faf5ff",
     icon: "📦",
     description: "Kurir sudah mengambil obat di apotek",
   },
   on_delivery: {
     label: "Sedang Diantar",
     color: "text-cyan-600 bg-cyan-50",
+    textColor: "#0891b2",
+    bgColor: "#ecfeff",
     icon: "🛵",
     description: "Kurir sedang dalam perjalanan ke alamat Anda",
   },
   delivered: {
     label: "Terkirim",
     color: "text-emerald-600 bg-emerald-50",
+    textColor: "#059669",
+    bgColor: "#ecfdf5",
     icon: "🎉",
     description: "Obat sudah sampai di tujuan",
   },
   cancelled: {
     label: "Dibatalkan",
     color: "text-red-600 bg-red-50",
+    textColor: "#dc2626",
+    bgColor: "#fef2f2",
     icon: "❌",
     description: "Permintaan pengiriman dibatalkan",
   },
 };
+

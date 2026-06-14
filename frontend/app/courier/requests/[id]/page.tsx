@@ -273,10 +273,11 @@ export default function CourierRequestDetailPage({ params }: { params: Promise<{
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-muted-foreground">Status Saat Ini</span>
             <div
-              className={cn(
-                "flex items-center rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider",
-                STATUS_CONFIG[request.status]?.color
-              )}
+              className="flex items-center rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider"
+              style={{
+                color: STATUS_CONFIG[request.status]?.textColor,
+                backgroundColor: STATUS_CONFIG[request.status]?.bgColor,
+              }}
             >
               {STATUS_CONFIG[request.status]?.label}
             </div>

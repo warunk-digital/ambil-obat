@@ -198,12 +198,19 @@ export default function AdminRequestDetailPage({ params }: { params: Promise<{ i
         <div className="space-y-6 lg:col-span-2">
           
           {/* Status Banner */}
-          <div className={cn("flex items-center gap-4 rounded-2xl border p-5", statusInfo.color.replace('text-', 'border-').replace('bg-', 'bg-opacity-10 bg-'))}>
+          <div
+            className="flex items-center gap-4 rounded-2xl border p-5"
+            style={{
+              color: statusInfo.textColor,
+              backgroundColor: statusInfo.bgColor,
+              borderColor: statusInfo.textColor + "33",
+            }}
+          >
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/50 text-2xl shadow-sm">
               {statusInfo.icon}
             </div>
             <div>
-              <h2 className="font-bold">{statusInfo.label}</h2>
+              <h2 className="font-bold" style={{ color: statusInfo.textColor }}>{statusInfo.label}</h2>
               <p className="text-sm opacity-80">{statusInfo.description}</p>
             </div>
           </div>

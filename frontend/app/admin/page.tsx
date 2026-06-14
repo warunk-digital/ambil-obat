@@ -5,6 +5,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/components/auth-provider";
 import { formatRupiah, formatDate } from "@/lib/helpers";
+import { STATUS_CONFIG } from "@/lib/types";
 import { 
   ClipboardList, 
   Package, 
@@ -134,9 +135,20 @@ export default function AdminDashboardPage() {
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="font-semibold text-primary">{req.request_number}</span>
-                    <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider">
-                      {req.status}
-                    </span>
+                    {(() => {
+                      const statusInfo = STATUS_CONFIG[req.status as import("@/lib/types").DeliveryStatus];
+                      return (
+                        <span 
+                          className="rounded-full px-2 py-0.5 text-[10px] font-medium tracking-wider"
+                          style={{
+                            color: statusInfo?.textColor,
+                            backgroundColor: statusInfo?.bgColor,
+                          }}
+                        >
+                          {statusInfo?.icon} {statusInfo?.label}
+                        </span>
+                      );
+                    })()}
                   </div>
                   <p className="mt-1 text-xs text-muted-foreground">
                     No. Obat: {req.medicine_number} • {req.address?.label}

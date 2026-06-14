@@ -208,8 +208,16 @@ export default function OrderDetailPage({
           <div className="flex items-center gap-3">
             <span className="text-2xl">{statusInfo?.icon}</span>
             <div>
-              <p className="text-sm font-semibold">{statusInfo?.label}</p>
-              <p className="text-xs text-muted-foreground">
+              <span
+                className="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold"
+                style={{
+                  color: statusInfo?.textColor,
+                  backgroundColor: statusInfo?.bgColor,
+                }}
+              >
+                {statusInfo?.icon} {statusInfo?.label}
+              </span>
+              <p className="mt-1 text-xs text-muted-foreground">
                 {statusInfo?.description}
               </p>
               {isCancelled && request.cancel_reason && (
