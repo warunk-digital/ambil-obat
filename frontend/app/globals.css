@@ -140,10 +140,10 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground overflow-x-hidden w-full;
+    @apply bg-background text-foreground overflow-x-clip w-full;
   }
-  html {
-    @apply font-sans overflow-x-hidden w-full;
+  #root, #__next, main, html {
+    @apply font-sans overflow-x-clip w-full;
   }
 }
 

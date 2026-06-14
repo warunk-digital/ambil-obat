@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/components/auth-provider";
-import { formatRupiah, formatDate, formatTime } from "@/lib/helpers";
+import { formatRupiah, formatDate, formatTime, fetchRouteData } from "@/lib/helpers";
 import { STATUS_CONFIG } from "@/lib/types";
 import type { DeliveryRequest, DeliveryStatus, User } from "@/lib/types";
 import { 
@@ -23,6 +23,7 @@ import {
   AlertCircle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import RouteMap from "@/components/route-map";
 
 export default function AdminRequestDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -37,6 +38,7 @@ export default function AdminRequestDetailPage({ params }: { params: Promise<{ i
   const [selectedCourier, setSelectedCourier] = useState("");
   const [showRejectForm, setShowRejectForm] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
+  const [routePoints, setRoutePoints] = useState<{ lat: number; lng: number }[]>([]);
 
   const PREDEFINED_REJECT_REASONS = [
     "Mohon Maaf Nomor Obat Tidak Tercatat pada RS/Apotek ini",
@@ -51,7 +53,7 @@ export default function AdminRequestDetailPage({ params }: { params: Promise<{ i
       // Fetch request details
       const { data: reqData } = await supabase
         .from("delivery_requests")
-        .select("*, address:addresses(*), customer:users!delivery_requests_user_id_fkey(*), courier:users!delivery_requests_courier_id_fkey(*)")
+        .select("*, address:addresses(*), pharmacy:pharmacies(*), customer:users!delivery_requests_user_id_fkey(*), courier:users!delivery_requests_courier_id_fkey(*)")
         .eq("id", id)
         .single();
 
@@ -86,6 +88,37 @@ export default function AdminRequestDetailPage({ params }: { params: Promise<{ i
 
     fetchData();
   }, [id, supabase]);
+
+  useEffect(() => {
+    let isMounted = true;
+    if (!request?.pharmacy || !request?.address) return;
+
+    const fetchPoints = async () => {
+      const apiKey = process.env.NEXT_PUBLIC_TOMTOM_API_KEY;
+      if (!apiKey) return;
+
+      const routeData = await fetchRouteData(
+        request.pharmacy!.latitude,
+        request.pharmacy!.longitude,
+        request.address!.latitude!,
+        request.address!.longitude!,
+        apiKey
+      );
+
+      console.log("Admin Request Detail Route Data:", {
+        pharmacy: request.pharmacy,
+        address: request.address,
+        routePoints: routeData?.points?.length
+      });
+
+      if (isMounted && routeData?.points) {
+        setRoutePoints(routeData.points);
+      }
+    };
+
+    fetchPoints();
+    return () => { isMounted = false; };
+  }, [request?.pharmacy, request?.address]);
 
   const updateStatus = async (newStatus: DeliveryStatus, reason?: string) => {
     if (!request || !user) return;
@@ -356,6 +389,22 @@ export default function AdminRequestDetailPage({ params }: { params: Promise<{ i
                 <div className="rounded-xl bg-muted/50 p-3">
                   <p className="text-xs font-semibold text-muted-foreground">Catatan Customer:</p>
                   <p className="mt-1 text-sm">{request.notes}</p>
+                </div>
+              )}
+
+              {/* Route Map Preview */}
+              {request.pharmacy && request.address && routePoints.length > 0 && (
+                <div className="space-y-1.5 pt-2">
+                  <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+                    Peta Rute Pengiriman
+                  </label>
+                  <RouteMap
+                    pharmacyLat={request.pharmacy.latitude}
+                    pharmacyLng={request.pharmacy.longitude}
+                    userLat={request.address.latitude!}
+                    userLng={request.address.longitude!}
+                    routePoints={routePoints}
+                  />
                 </div>
               )}
             </div>

@@ -11,6 +11,7 @@ import {
   formatTime,
   formatRelativeTime,
   generateWhatsAppLink,
+  fetchRouteData,
 } from "@/lib/helpers";
 import { STATUS_CONFIG } from "@/lib/types";
 import type { DeliveryRequest, DeliveryStatus, RequestStatusLog } from "@/lib/types";
@@ -29,6 +30,7 @@ import {
   Check,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import RouteMap from "@/components/route-map";
 
 const LOGICAL_STAGES = [
   { label: "Menunggu", statuses: ["pending"] },
@@ -51,6 +53,7 @@ export default function OrderDetailPage({
   const [statusLogs, setStatusLogs] = useState<RequestStatusLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [routePoints, setRoutePoints] = useState<{ lat: number; lng: number }[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -110,6 +113,31 @@ export default function OrderDetailPage({
     };
   }, [id, supabase]);
 
+  useEffect(() => {
+    let isMounted = true;
+    if (!request?.pharmacy || !request?.address) return;
+
+    const fetchPoints = async () => {
+      const apiKey = process.env.NEXT_PUBLIC_TOMTOM_API_KEY;
+      if (!apiKey) return;
+
+      const routeData = await fetchRouteData(
+        request.pharmacy!.latitude,
+        request.pharmacy!.longitude,
+        request.address!.latitude!,
+        request.address!.longitude!,
+        apiKey
+      );
+
+      if (isMounted && routeData?.points) {
+        setRoutePoints(routeData.points);
+      }
+    };
+
+    fetchPoints();
+    return () => { isMounted = false; };
+  }, [request?.pharmacy, request?.address]);
+
   const handleCopy = async () => {
     if (!request) return;
     await navigator.clipboard.writeText(request.request_number);
@@ -145,7 +173,7 @@ export default function OrderDetailPage({
   return (
     <div className="min-h-svh bg-background pb-8">
       {/* Header */}
-      <div className="bg-card px-6 pt-12 pb-6 shadow-sm">
+      <div className="sticky top-0 z-50 bg-card px-6 pt-12 pb-6 shadow-sm">
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.back()}
@@ -319,6 +347,22 @@ export default function OrderDetailPage({
               <div className="rounded-lg bg-muted/50 px-3 py-2">
                 <p className="text-[10px] font-medium text-muted-foreground">CATATAN</p>
                 <p className="text-xs">{request.notes}</p>
+              </div>
+            )}
+            
+            {/* Route Map Preview */}
+            {request.pharmacy && request.address && routePoints.length > 0 && (
+              <div className="space-y-1.5 pt-2">
+                <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+                  Peta Rute Pengiriman
+                </label>
+                <RouteMap
+                  pharmacyLat={request.pharmacy.latitude}
+                  pharmacyLng={request.pharmacy.longitude}
+                  userLat={request.address.latitude!}
+                  userLng={request.address.longitude!}
+                  routePoints={routePoints}
+                />
               </div>
             )}
           </div>

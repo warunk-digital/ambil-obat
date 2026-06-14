@@ -1,6 +1,42 @@
 import type { Pharmacy } from "./types";
 
 /**
+ * Fetch actual route distance and points using TomTom Routing API
+ */
+export async function fetchRouteData(
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number,
+  apiKey: string
+): Promise<{ distanceKm: number; points: { lat: number; lng: number }[] } | null> {
+  try {
+    const url = `https://api.tomtom.com/routing/1/calculateRoute/${lat1},${lng1}:${lat2},${lng2}/json?key=${apiKey}`;
+    const response = await fetch(url);
+    if (!response.ok) return null;
+    const data = await response.json();
+    
+    const route = data.routes?.[0];
+    const lengthInMeters = route?.summary?.lengthInMeters;
+    const points = route?.legs?.[0]?.points?.map((p: any) => ({
+      lat: p.latitude,
+      lng: p.longitude,
+    })) || [];
+
+    if (lengthInMeters != null) {
+      return {
+        distanceKm: lengthInMeters / 1000,
+        points,
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching TomTom route:", error);
+    return null;
+  }
+}
+
+/**
  * Calculate distance between two points using Haversine formula
  */
 export function calculateDistanceKm(

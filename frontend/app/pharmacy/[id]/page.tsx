@@ -11,6 +11,7 @@ import {
   formatRupiah,
   calculateDistanceKm,
   calculateDeliveryFee,
+  fetchRouteData,
 } from "@/lib/helpers";
 import type { Pharmacy, Address } from "@/lib/types";
 import {
@@ -32,6 +33,7 @@ import {
 import { cn } from "@/lib/utils";
 import { LocationSearch } from "@/components/location-search";
 import { MapPicker } from "@/components/map-picker";
+import RouteMap from "@/components/route-map";
 
 export default function PharmacyDetailPage({
   params,
@@ -57,6 +59,11 @@ export default function PharmacyDetailPage({
   const [notes, setNotes] = useState("");
   const [error, setError] = useState("");
   const [showAddressForm, setShowAddressForm] = useState(false);
+
+  // Routing and Fee state
+  const [routeDistanceKm, setRouteDistanceKm] = useState<number | null>(null);
+  const [routePoints, setRoutePoints] = useState<{ lat: number; lng: number }[]>([]);
+  const [isCalculatingRoute, setIsCalculatingRoute] = useState(false);
 
   // New address form
   const [newAddressLabel, setNewAddressLabel] = useState("Rumah");
@@ -93,24 +100,67 @@ export default function PharmacyDetailPage({
     fetchData();
   }, [id, user, supabase]);
 
-  // Calculate delivery fee
+  // Calculate delivery fee using routing distance
   const selectedAddress = addresses.find((a) => a.id === selectedAddressId);
-  const distanceKm =
-    pharmacy && selectedAddress?.latitude && selectedAddress?.longitude
-      ? calculateDistanceKm(
-          pharmacy.latitude,
-          pharmacy.longitude,
-          selectedAddress.latitude,
-          selectedAddress.longitude,
-        )
-      : null;
+  
+  useEffect(() => {
+    let isMounted = true;
+    
+    const fetchRoute = async () => {
+      if (!pharmacy || !selectedAddress?.latitude || !selectedAddress?.longitude) {
+        if (isMounted) setRouteDistanceKm(null);
+        return;
+      }
+      
+      const apiKey = process.env.NEXT_PUBLIC_TOMTOM_API_KEY;
+      if (!apiKey) {
+        // Fallback to haversine if no API key
+        if (isMounted) {
+           setRouteDistanceKm(calculateDistanceKm(pharmacy.latitude, pharmacy.longitude, selectedAddress.latitude, selectedAddress.longitude));
+           setRoutePoints([]);
+        }
+        return;
+      }
+
+      if (isMounted) setIsCalculatingRoute(true);
+      
+      try {
+        const routeData = await fetchRouteData(pharmacy.latitude, pharmacy.longitude, selectedAddress.latitude, selectedAddress.longitude, apiKey);
+        if (isMounted) {
+           if (routeData !== null) {
+             setRouteDistanceKm(routeData.distanceKm);
+             setRoutePoints(routeData.points);
+           } else {
+             // Fallback to Haversine if API fails
+             setRouteDistanceKm(calculateDistanceKm(pharmacy.latitude, pharmacy.longitude, selectedAddress.latitude, selectedAddress.longitude));
+             setRoutePoints([]);
+           }
+        }
+      } catch (err) {
+         if (isMounted) {
+            setRouteDistanceKm(calculateDistanceKm(pharmacy.latitude, pharmacy.longitude, selectedAddress.latitude, selectedAddress.longitude));
+            setRoutePoints([]);
+         }
+      } finally {
+        if (isMounted) setIsCalculatingRoute(false);
+      }
+    };
+
+    fetchRoute();
+    
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedAddressId, addresses, pharmacy]);
+
   const deliveryFee =
-    pharmacy && distanceKm != null
-      ? calculateDeliveryFee(pharmacy, distanceKm)
+    pharmacy && routeDistanceKm != null
+      ? calculateDeliveryFee(pharmacy, routeDistanceKm)
       : null;
+      
   const isWithinRadius =
-    pharmacy && distanceKm != null
-      ? distanceKm <= pharmacy.delivery_radius_km
+    pharmacy && routeDistanceKm != null
+      ? routeDistanceKm <= pharmacy.delivery_radius_km
       : true;
 
   const handleGetCurrentLocation = () => {
@@ -195,6 +245,38 @@ export default function PharmacyDetailPage({
     }
   };
 
+  const handleDeleteAddress = async () => {
+    if (!selectedAddressId || !user) return;
+    
+    if (!confirm("Apakah Anda yakin ingin menghapus alamat ini?")) return;
+
+    try {
+      setSubmitting(true);
+      const { error } = await supabase
+        .from("addresses")
+        .delete()
+        .eq("id", selectedAddressId)
+        .eq("user_id", user.id);
+
+      if (error) throw error;
+
+      // Update state
+      const newAddresses = addresses.filter(a => a.id !== selectedAddressId);
+      setAddresses(newAddresses);
+      
+      // Auto-select another address if available
+      if (newAddresses.length > 0) {
+        setSelectedAddressId(newAddresses[0].id);
+      } else {
+        setSelectedAddressId("");
+      }
+    } catch (err: any) {
+      setError(err.message || "Gagal menghapus alamat");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -230,7 +312,7 @@ export default function PharmacyDetailPage({
         medicine_number: medicineNumber.trim(),
         medicine_description: medicineDescription.trim() || null,
         delivery_fee: deliveryFee || 0,
-        distance_km: distanceKm,
+        distance_km: routeDistanceKm,
         notes: notes.trim() || null,
       })
       .select("request_number")
@@ -419,13 +501,24 @@ export default function PharmacyDetailPage({
                     </select>
                     <ChevronDown className="absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => setShowAddressForm(true)}
-                    className="text-xs font-medium text-primary"
-                  >
-                    + Tambah alamat baru
-                  </button>
+                  <div className="flex items-center justify-between">
+                    <button
+                      type="button"
+                      onClick={() => setShowAddressForm(true)}
+                      className="text-xs font-medium text-primary hover:underline"
+                    >
+                      + Tambah alamat baru
+                    </button>
+                    {selectedAddressId && (
+                      <button
+                        type="button"
+                        onClick={handleDeleteAddress}
+                        className="text-xs font-medium text-destructive hover:underline"
+                      >
+                        Hapus alamat
+                      </button>
+                    )}
+                  </div>
                 </div>
               ) : (
                 <div className="space-y-4 rounded-xl border border-primary/20 bg-card p-4 shadow-sm">
@@ -613,9 +706,9 @@ export default function PharmacyDetailPage({
                     {formatRupiah(deliveryFee)}
                   </span>
                 </div>
-                {distanceKm != null && (
+                {routeDistanceKm != null && (
                   <p className="mt-1 text-[11px] text-muted-foreground">
-                    Jarak: {distanceKm.toFixed(1)} km • Bayar saat terima (COD)
+                    Jarak tempuh: {routeDistanceKm.toFixed(1)} km • Bayar saat terima (COD)
                   </p>
                 )}
               </div>
@@ -632,6 +725,22 @@ export default function PharmacyDetailPage({
               </div>
             )}
 
+            {/* Route Map Preview */}
+            {pharmacy && selectedAddress && routePoints.length > 0 && isWithinRadius && (
+              <div className="space-y-1.5 pt-2">
+                <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+                  Peta Rute Pengiriman
+                </label>
+                <RouteMap
+                  pharmacyLat={pharmacy.latitude}
+                  pharmacyLng={pharmacy.longitude}
+                  userLat={selectedAddress.latitude!}
+                  userLng={selectedAddress.longitude!}
+                  routePoints={routePoints}
+                />
+              </div>
+            )}
+
             {/* Error */}
             {error && (
               <div className="rounded-lg bg-destructive/10 px-4 py-3 text-sm text-destructive">
@@ -643,18 +752,20 @@ export default function PharmacyDetailPage({
             <Button
               type="submit"
               className="h-12 w-full rounded-2xl text-sm font-semibold shadow-lg shadow-primary/20"
-              disabled={submitting || !isOpen || !isWithinRadius}
+              disabled={submitting || isCalculatingRoute || !isOpen || !isWithinRadius}
             >
-              {submitting ? (
+              {submitting || isCalculatingRoute ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
                 <Truck className="mr-2 h-4 w-4" />
               )}
               {!isOpen
                 ? "Apotek Sedang Tutup"
-                : submitting
-                  ? "Mengirim Request..."
-                  : "Request Antar Obat"}
+                : isCalculatingRoute
+                  ? "Menghitung Jarak Tempuh..."
+                  : submitting
+                    ? "Mengirim Request..."
+                    : "Request Antar Obat"}
             </Button>
           </form>
         </div>
