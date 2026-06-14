@@ -235,6 +235,8 @@ export default function PharmacyDetailPage({
     e.preventDefault();
     setError("");
 
+    if (!user) return;
+
     if (!medicineNumber.trim()) {
       setError("Nomor obat wajib diisi");
       return;
