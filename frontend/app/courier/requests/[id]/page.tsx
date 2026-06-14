@@ -131,6 +131,37 @@ export default function CourierRequestDetailPage({ params }: { params: Promise<{
     setUpdating(false);
   };
 
+  const takeTask = async () => {
+    if (!request || !user) return;
+    setUpdating(true);
+
+    const { data, error } = await supabase
+      .from("delivery_requests")
+      .update({ status: "courier_assigned", courier_id: user.id })
+      .eq("id", id)
+      .eq("status", "confirmed")
+      .is("courier_id", null)
+      .select()
+      .single();
+
+    if (!error && data) {
+      // Create status log
+      await supabase.from("request_status_logs").insert({
+        request_id: id,
+        status: "courier_assigned",
+        created_by: user.id,
+        note: "Diambil otomatis oleh kurir (Grab)"
+      });
+
+      setRequest(data as unknown as DeliveryRequest);
+    } else {
+      alert("Gagal mengambil tugas. Pesanan ini mungkin sudah diambil oleh kurir lain.");
+      router.push("/courier");
+    }
+    
+    setUpdating(false);
+  };
+
   const openWhatsApp = () => {
     if (!request?.customer?.phone) return;
     // Format phone number (remove leading 0 and add 62)
@@ -173,7 +204,17 @@ export default function CourierRequestDetailPage({ params }: { params: Promise<{
 
   // Determine next action button based on current status
   let actionButton = null;
-  if (request.status === "courier_assigned") {
+  if (request.status === "confirmed" && !request.courier_id) {
+    actionButton = (
+      <Button 
+        onClick={takeTask} 
+        disabled={updating}
+        className="w-full h-12 rounded-xl font-bold shadow-lg shadow-primary/20"
+      >
+        {updating ? "Memproses..." : "Ambil Tugas Ini"}
+      </Button>
+    );
+  } else if (request.status === "courier_assigned" && request.courier_id === user?.id) {
     actionButton = (
       <Button 
         onClick={() => updateStatus("picked_up")} 
@@ -183,7 +224,7 @@ export default function CourierRequestDetailPage({ params }: { params: Promise<{
         {updating ? "Memproses..." : "Obat Sudah Diambil di Apotek"}
       </Button>
     );
-  } else if (request.status === "picked_up") {
+  } else if (request.status === "picked_up" && request.courier_id === user?.id) {
     actionButton = (
       <Button 
         onClick={() => updateStatus("on_delivery")} 
@@ -194,7 +235,7 @@ export default function CourierRequestDetailPage({ params }: { params: Promise<{
         {updating ? "Memproses..." : "Mulai Jalan ke Tujuan"}
       </Button>
     );
-  } else if (request.status === "on_delivery") {
+  } else if (request.status === "on_delivery" && request.courier_id === user?.id) {
     actionButton = (
       <Button 
         onClick={() => updateStatus("delivered")} 
@@ -234,8 +275,7 @@ export default function CourierRequestDetailPage({ params }: { params: Promise<{
             <div
               className={cn(
                 "flex items-center rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider",
-                STATUS_CONFIG[request.status]?.color,
-                STATUS_CONFIG[request.status]?.bg
+                STATUS_CONFIG[request.status]?.color
               )}
             >
               {STATUS_CONFIG[request.status]?.label}

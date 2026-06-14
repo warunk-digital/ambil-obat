@@ -12,23 +12,45 @@ import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 
 export default function CourierDashboard() {
-  const { user, signOut } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const supabase = createClient();
   const router = useRouter();
   
   const [requests, setRequests] = useState<DeliveryRequest[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"active" | "completed">("active");
+  const [activeTab, setActiveTab] = useState<"available" | "active" | "completed">("available");
+  const [pharmacyId, setPharmacyId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
+
+    const init = async () => {
+      // get pharmacy_id
+      const { data: staffData } = await supabase
+        .from("pharmacy_staff")
+        .select("pharmacy_id")
+        .eq("user_id", user.id)
+        .eq("is_active", true)
+        .maybeSingle();
+
+      if (staffData?.pharmacy_id) {
+        setPharmacyId(staffData.pharmacy_id);
+      } else {
+        setLoading(false); // Can't fetch requests if no pharmacy
+      }
+    };
+    init();
+  }, [user, supabase]);
+
+  useEffect(() => {
+    if (!user || !pharmacyId) return;
 
     const fetchRequests = async () => {
       setLoading(true);
       const { data } = await supabase
         .from("delivery_requests")
         .select("*, pharmacy:pharmacies(name), address:addresses(full_address)")
-        .eq("courier_id", user.id)
+        .eq("pharmacy_id", pharmacyId)
         .order("created_at", { ascending: false });
 
       if (data) {
@@ -48,7 +70,7 @@ export default function CourierDashboard() {
           event: "*",
           schema: "public",
           table: "delivery_requests",
-          filter: `courier_id=eq.${user.id}`,
+          filter: `pharmacy_id=eq.${pharmacyId}`,
         },
         () => {
           fetchRequests();
@@ -59,15 +81,18 @@ export default function CourierDashboard() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [user, supabase]);
+  }, [user, pharmacyId, supabase]);
 
   const activeStatuses = ["courier_assigned", "picked_up", "on_delivery"];
   const completedStatuses = ["delivered", "cancelled"];
 
-  const activeRequests = requests.filter((r) => activeStatuses.includes(r.status));
-  const completedRequests = requests.filter((r) => completedStatuses.includes(r.status));
+  const availableRequests = requests.filter((r) => r.status === "confirmed" && !r.courier_id);
+  const activeRequests = requests.filter((r) => activeStatuses.includes(r.status) && r.courier_id === user?.id);
+  const completedRequests = requests.filter((r) => completedStatuses.includes(r.status) && r.courier_id === user?.id);
 
-  const displayRequests = activeTab === "active" ? activeRequests : completedRequests;
+  const displayRequests = 
+    activeTab === "available" ? availableRequests :
+    activeTab === "active" ? activeRequests : completedRequests;
 
   const handleSignOut = async () => {
     await signOut();
@@ -80,7 +105,7 @@ export default function CourierDashboard() {
       <div className="sticky top-0 z-50 flex items-center justify-between bg-card px-6 py-4 shadow-sm">
         <div>
           <h1 className="text-lg font-bold text-primary">Tugas Kurir</h1>
-          <p className="text-xs text-muted-foreground">Halo, {user?.full_name}</p>
+          <p className="text-xs text-muted-foreground">Halo, {profile?.full_name}</p>
         </div>
         <button 
           onClick={handleSignOut}
@@ -94,6 +119,22 @@ export default function CourierDashboard() {
       <div className="px-4 pt-4">
         <div className="flex rounded-xl bg-muted/50 p-1">
           <button
+            onClick={() => setActiveTab("available")}
+            className={cn(
+              "flex-1 rounded-lg py-2 text-xs font-semibold transition-all",
+              activeTab === "available"
+                ? "bg-background text-primary shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            Tersedia
+            {availableRequests.length > 0 && (
+              <span className="ml-2 inline-flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 text-[10px] text-white">
+                {availableRequests.length}
+              </span>
+            )}
+          </button>
+          <button
             onClick={() => setActiveTab("active")}
             className={cn(
               "flex-1 rounded-lg py-2 text-xs font-semibold transition-all",
@@ -102,7 +143,7 @@ export default function CourierDashboard() {
                 : "text-muted-foreground hover:text-foreground"
             )}
           >
-            Tugas Aktif
+            Aktif
             {activeRequests.length > 0 && (
               <span className="ml-2 inline-flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground">
                 {activeRequests.length}
@@ -136,7 +177,9 @@ export default function CourierDashboard() {
             <div className="space-y-1">
               <p className="text-sm font-medium">Tidak ada tugas</p>
               <p className="text-xs text-muted-foreground">
-                {activeTab === "active" 
+                {activeTab === "available" 
+                  ? "Belum ada pesanan yang bisa diambil."
+                  : activeTab === "active" 
                   ? "Anda belum mendapat tugas pengantaran baru." 
                   : "Belum ada tugas yang diselesaikan."}
               </p>
@@ -164,8 +207,7 @@ export default function CourierDashboard() {
                 <div
                   className={cn(
                     "flex items-center rounded-full px-2 py-1 text-[10px] font-medium",
-                    STATUS_CONFIG[request.status]?.color,
-                    STATUS_CONFIG[request.status]?.bg
+                    STATUS_CONFIG[request.status]?.color
                   )}
                 >
                   {STATUS_CONFIG[request.status]?.label}

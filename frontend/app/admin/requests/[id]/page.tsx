@@ -214,26 +214,27 @@ export default function AdminRequestDetailPage({ params }: { params: Promise<{ i
             
             <div className="flex flex-wrap gap-3">
               {request.status === "pending" && (
-                <button
-                  onClick={() => updateStatus("confirmed")}
-                  disabled={updating}
-                  className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-blue-700 disabled:opacity-50"
-                >
-                  {updating ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
-                  Konfirmasi Obat Siap
-                </button>
-              )}
+                <div className="flex w-full flex-col sm:flex-row gap-3">
+                  <button
+                    onClick={() => updateStatus("confirmed")}
+                    disabled={updating}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-blue-700 disabled:opacity-50"
+                  >
+                    {updating ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
+                    Konfirmasi Obat Siap
+                  </button>
 
-              {request.status === "pending" && !showRejectForm && (
-                <button
-                  onClick={() => setShowRejectForm(true)}
-                  disabled={updating}
-                  className="flex items-center gap-2 rounded-xl bg-destructive/10 px-5 py-2.5 text-sm font-semibold text-destructive transition-all hover:bg-destructive/20 disabled:opacity-50"
-                >
-                  Tolak / Batalkan
-                </button>
+                  {!showRejectForm && (
+                    <button
+                      onClick={() => setShowRejectForm(true)}
+                      disabled={updating}
+                      className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-destructive/10 px-5 py-3 text-sm font-semibold text-destructive transition-all hover:bg-destructive/20 disabled:opacity-50"
+                    >
+                      Tolak / Batalkan
+                    </button>
+                  )}
+                </div>
               )}
-
               {showRejectForm && (
                 <div className="w-full mt-3 rounded-xl border border-destructive/20 bg-destructive/5 p-4 animate-in fade-in slide-in-from-top-2">
                   <p className="mb-2 text-sm font-semibold text-destructive">Alasan Penolakan</p>
