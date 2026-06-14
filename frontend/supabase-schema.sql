@@ -44,6 +44,7 @@ CREATE TABLE public.pharmacies (
   longitude DOUBLE PRECISION NOT NULL,
   delivery_radius_km DOUBLE PRECISION NOT NULL DEFAULT 10,
   delivery_fee_base INTEGER NOT NULL DEFAULT 5000,
+  delivery_fee_base_km DOUBLE PRECISION NOT NULL DEFAULT 1,
   delivery_fee_per_km INTEGER NOT NULL DEFAULT 2000,
   operating_hours JSONB DEFAULT '{
     "mon": {"open": "08:00", "close": "21:00"},

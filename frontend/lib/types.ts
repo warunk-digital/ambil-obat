@@ -34,6 +34,7 @@ export interface Pharmacy {
   longitude: number;
   delivery_radius_km: number;
   delivery_fee_base: number;
+  delivery_fee_base_km: number;
   delivery_fee_per_km: number;
   operating_hours: Record<
     string,

@@ -67,6 +67,7 @@ export default function AdminSettingsPage() {
         name: pharmacy.name,
         delivery_radius_km: pharmacy.delivery_radius_km,
         delivery_fee_base: pharmacy.delivery_fee_base,
+        delivery_fee_base_km: pharmacy.delivery_fee_base_km,
         delivery_fee_per_km: pharmacy.delivery_fee_per_km,
         is_active: pharmacy.is_active,
         operating_hours: pharmacy.operating_hours,
@@ -277,6 +278,19 @@ export default function AdminSettingsPage() {
                   onChange={(e) => setPharmacy({ ...pharmacy, delivery_fee_base: parseInt(e.target.value) || 0 })}
                   className="h-11 w-full rounded-xl border border-input bg-background px-4 text-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
                 />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Jarak Tarif Dasar (KM)</label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.1"
+                  value={pharmacy.delivery_fee_base_km ?? 1}
+                  onChange={(e) => setPharmacy({ ...pharmacy, delivery_fee_base_km: parseFloat(e.target.value) || 0 })}
+                  className="h-11 w-full rounded-xl border border-input bg-background px-4 text-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
+                />
+                <p className="text-xs text-muted-foreground">Jarak pengiriman (KM pertama) yang tercakup dalam tarif dasar.</p>
               </div>
 
               <div className="space-y-2">

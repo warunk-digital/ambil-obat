@@ -33,7 +33,8 @@ export function calculateDeliveryFee(
   pharmacy: Pharmacy,
   distanceKm: number,
 ): number {
-  const extraKm = Math.max(0, distanceKm - 1); // first 1 km included in base
+  const baseKm = pharmacy.delivery_fee_base_km ?? 1;
+  const extraKm = Math.max(0, distanceKm - baseKm); // first 'baseKm' km included in base
   return pharmacy.delivery_fee_base + Math.ceil(extraKm) * pharmacy.delivery_fee_per_km;
 }
 
