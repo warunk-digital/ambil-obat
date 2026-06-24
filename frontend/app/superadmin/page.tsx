@@ -47,7 +47,7 @@ export default function SuperAdminDashboard() {
     <div className="p-6">
       <div className="mb-8">
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">Platform Overview</h1>
-        <p className="text-slate-500">Statistik keseluruhan platform Ambil Obat</p>
+        <p className="text-slate-500">Statistik keseluruhan platform Sobat</p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">

@@ -132,7 +132,7 @@ export default function AdminSettingsPage() {
         <form onSubmit={handleSubmit} className="space-y-6">
           
           {/* Profil Apotek */}
-          <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
+          <div className="rounded-lg border border-border/60 bg-card p-6 shadow-sm">
             <div className="mb-4 flex items-center gap-2">
               <Store className="h-5 w-5 text-primary" />
               <h2 className="text-lg font-semibold">Profil Apotek</h2>
@@ -146,7 +146,7 @@ export default function AdminSettingsPage() {
                   value={pharmacy.name || ""}
                   onChange={(e) => setPharmacy({ ...pharmacy, name: e.target.value })}
                   placeholder="Contoh: Apotek Sehat"
-                  className="h-11 w-full rounded-xl border border-input bg-background px-4 text-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
+                  className="h-11 w-full rounded-md border border-input bg-background px-4 text-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
                   required
                 />
               </div>
@@ -158,7 +158,7 @@ export default function AdminSettingsPage() {
                   value={pharmacy.phone || ""}
                   onChange={(e) => setPharmacy({ ...pharmacy, phone: e.target.value })}
                   placeholder="Contoh: 08123456789"
-                  className="h-11 w-full rounded-xl border border-input bg-background px-4 text-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
+                  className="h-11 w-full rounded-md border border-input bg-background px-4 text-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
                 />
                 <p className="text-xs text-muted-foreground">Nomor ini akan dihubungi oleh pasien.</p>
               </div>
@@ -166,13 +166,13 @@ export default function AdminSettingsPage() {
           </div>
 
           {/* Status Apotek */}
-          <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
+          <div className="rounded-lg border border-border/60 bg-card p-6 shadow-sm">
             <div className="mb-4 flex items-center gap-2">
               <AlertCircle className="h-5 w-5 text-primary" />
               <h2 className="text-lg font-semibold">Status Operasional</h2>
             </div>
             
-            <label className="flex cursor-pointer items-center justify-between rounded-xl border border-border p-4 transition-colors hover:bg-muted/50">
+            <label className="flex cursor-pointer items-center justify-between rounded-md border border-border p-4 transition-colors hover:bg-muted/50">
               <div>
                 <p className="font-medium">Buka untuk Pesanan</p>
                 <p className="text-xs text-muted-foreground">Aktifkan untuk menerima request antar obat baru.</p>
@@ -191,7 +191,7 @@ export default function AdminSettingsPage() {
           </div>
 
           {/* Jam Operasional */}
-          <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
+          <div className="rounded-lg border border-border/60 bg-card p-6 shadow-sm">
             <div className="mb-4 flex items-center gap-2">
               <Clock className="h-5 w-5 text-primary" />
               <h2 className="text-lg font-semibold">Jam Buka & Tutup Apotek</h2>
@@ -246,7 +246,7 @@ export default function AdminSettingsPage() {
           </div>
 
           {/* Jangkauan & Ongkir */}
-          <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
+          <div className="rounded-lg border border-border/60 bg-card p-6 shadow-sm">
             <div className="mb-4 flex items-center gap-2">
               <MapPin className="h-5 w-5 text-primary" />
               <h2 className="text-lg font-semibold">Pengiriman & Ongkir</h2>
@@ -261,7 +261,7 @@ export default function AdminSettingsPage() {
                   step="0.1"
                   value={pharmacy.delivery_radius_km}
                   onChange={(e) => setPharmacy({ ...pharmacy, delivery_radius_km: parseFloat(e.target.value) || 0 })}
-                  className="h-11 w-full rounded-xl border border-input bg-background px-4 text-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
+                  className="h-11 w-full rounded-md border border-input bg-background px-4 text-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
                 />
                 <p className="text-xs text-muted-foreground">Pasien di luar radius ini tidak dapat membuat pesanan.</p>
               </div>
@@ -276,7 +276,7 @@ export default function AdminSettingsPage() {
                   step="500"
                   value={pharmacy.delivery_fee_base}
                   onChange={(e) => setPharmacy({ ...pharmacy, delivery_fee_base: parseInt(e.target.value) || 0 })}
-                  className="h-11 w-full rounded-xl border border-input bg-background px-4 text-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
+                  className="h-11 w-full rounded-md border border-input bg-background px-4 text-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
                 />
               </div>
 
@@ -288,7 +288,7 @@ export default function AdminSettingsPage() {
                   step="0.1"
                   value={pharmacy.delivery_fee_base_km ?? 1}
                   onChange={(e) => setPharmacy({ ...pharmacy, delivery_fee_base_km: parseFloat(e.target.value) || 0 })}
-                  className="h-11 w-full rounded-xl border border-input bg-background px-4 text-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
+                  className="h-11 w-full rounded-md border border-input bg-background px-4 text-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
                 />
                 <p className="text-xs text-muted-foreground">Jarak pengiriman (KM pertama) yang tercakup dalam tarif dasar.</p>
               </div>
@@ -303,14 +303,14 @@ export default function AdminSettingsPage() {
                   step="500"
                   value={pharmacy.delivery_fee_per_km}
                   onChange={(e) => setPharmacy({ ...pharmacy, delivery_fee_per_km: parseInt(e.target.value) || 0 })}
-                  className="h-11 w-full rounded-xl border border-input bg-background px-4 text-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
+                  className="h-11 w-full rounded-md border border-input bg-background px-4 text-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
                 />
               </div>
             </div>
           </div>
 
           {message.text && (
-            <div className={`flex items-center gap-2 rounded-xl p-4 text-sm ${message.type === 'error' ? 'bg-destructive/10 text-destructive' : 'bg-emerald-50 text-emerald-600'}`}>
+            <div className={`flex items-center gap-2 rounded-md p-4 text-sm ${message.type === 'error' ? 'bg-destructive/10 text-destructive' : 'bg-emerald-50 text-emerald-600'}`}>
               <AlertCircle className="h-5 w-5 shrink-0" />
               {message.text}
             </div>
@@ -320,7 +320,7 @@ export default function AdminSettingsPage() {
             <button
               type="submit"
               disabled={saving}
-              className="flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary/90 disabled:opacity-50"
+              className="flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary/90 disabled:opacity-50"
             >
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
               Simpan Perubahan

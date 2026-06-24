@@ -6,12 +6,10 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
-  Pill,
   Eye,
   EyeOff,
   ArrowRight,
   Loader2,
-  Truck,
   User,
   Phone,
 } from "lucide-react";
@@ -77,7 +75,7 @@ export default function RegisterPage() {
           </div>
           <h2 className="mb-2 text-xl font-bold">Akun Berhasil Dibuat!</h2>
           <p className="text-sm text-muted-foreground">
-            Selamat datang di Ambil Obat. Anda akan dialihkan ke halaman utama...
+            Selamat datang di Sobat. Anda akan dialihkan ke halaman utama...
           </p>
         </div>
       </div>
@@ -89,12 +87,11 @@ export default function RegisterPage() {
       {/* Header */}
       <div className="flex flex-col items-center px-6 pt-10 pb-6">
         <div className="relative mb-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/80 shadow-lg shadow-primary/25">
-            <Pill className="h-8 w-8 text-primary-foreground" />
-          </div>
-          <div className="absolute -right-1.5 -bottom-1.5 flex h-7 w-7 items-center justify-center rounded-lg bg-secondary shadow-md">
-            <Truck className="h-4 w-4 text-primary" />
-          </div>
+          <img
+            src="/Logo Sobat BG Putih.png"
+            alt="Sobat Logo"
+            className="h-16 w-16 object-contain rounded-2xl shadow-lg shadow-black/10 border border-border/50 bg-white"
+          />
         </div>
         <h1 className="gradient-text text-xl font-bold tracking-tight">
           Buat Akun Baru
@@ -107,7 +104,7 @@ export default function RegisterPage() {
       {/* Register Form */}
       <div className="flex-1 px-6 pb-8">
         <div className="mx-auto max-w-sm">
-          <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-xl shadow-black/5">
+          <div className="rounded-lg border border-border/60 bg-card p-6 shadow-xl shadow-black/5">
             <form onSubmit={handleRegister} className="space-y-4">
               <div className="space-y-2">
                 <label htmlFor="fullName" className="text-sm font-medium">
@@ -123,7 +120,7 @@ export default function RegisterPage() {
                     placeholder="Masukkan nama lengkap"
                     required
                     autoComplete="name"
-                    className="flex h-11 w-full rounded-xl border border-input bg-background pl-10 pr-4 text-sm transition-colors placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
+                    className="flex h-11 w-full rounded-md border border-input bg-background pl-10 pr-4 text-sm transition-colors placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
                   />
                 </div>
               </div>
@@ -142,7 +139,7 @@ export default function RegisterPage() {
                     placeholder="08xxxxxxxxxx"
                     required
                     autoComplete="tel"
-                    className="flex h-11 w-full rounded-xl border border-input bg-background pl-10 pr-4 text-sm transition-colors placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
+                    className="flex h-11 w-full rounded-md border border-input bg-background pl-10 pr-4 text-sm transition-colors placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
                   />
                 </div>
               </div>
@@ -159,7 +156,7 @@ export default function RegisterPage() {
                   placeholder="nama@email.com"
                   required
                   autoComplete="email"
-                  className="flex h-11 w-full rounded-xl border border-input bg-background px-4 text-sm transition-colors placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
+                  className="flex h-11 w-full rounded-md border border-input bg-background px-4 text-sm transition-colors placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
                 />
               </div>
 
@@ -177,7 +174,7 @@ export default function RegisterPage() {
                     required
                     minLength={6}
                     autoComplete="new-password"
-                    className="flex h-11 w-full rounded-xl border border-input bg-background px-4 pr-11 text-sm transition-colors placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
+                    className="flex h-11 w-full rounded-md border border-input bg-background px-4 pr-11 text-sm transition-colors placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
                   />
                   <button
                     type="button"
@@ -202,7 +199,7 @@ export default function RegisterPage() {
 
               <Button
                 type="submit"
-                className="h-11 w-full rounded-xl text-sm font-semibold"
+                className="h-11 w-full rounded-md text-sm font-semibold"
                 disabled={loading}
               >
                 {loading ? (

@@ -10,13 +10,13 @@ const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   title: {
-    default: "Ambil Obat — Antar Obat ke Rumah",
-    template: "%s | Ambil Obat",
+    default: "Sobat — Antar Obat ke Rumah",
+    template: "%s | Sobat",
   },
   description:
     "Layanan antar obat dari apotek ke rumah Anda. Cukup masukkan nomor obat, obat diantar oleh kurir apotek.",
   keywords: ["antar obat", "apotek", "delivery", "obat", "kesehatan"],
-  authors: [{ name: "Ambil Obat" }],
+  authors: [{ name: "Sobat" }],
 };
 
 export const viewport: Viewport = {

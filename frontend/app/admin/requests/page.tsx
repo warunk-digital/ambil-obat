@@ -106,7 +106,7 @@ export default function AdminRequestsPage() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-hidden rounded-2xl border border-border/60 bg-white/70 backdrop-blur-xl shadow-sm">
+      <div className="flex-1 overflow-hidden rounded-lg border border-border/60 bg-white/70 backdrop-blur-xl shadow-sm">
         {loading ? (
           <div className="flex h-64 items-center justify-center">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -128,10 +128,10 @@ export default function AdminRequestsPage() {
                 <Link
                   key={req.id}
                   href={`/admin/requests/${req.id}`}
-                  className="group flex flex-col gap-4 p-4 mb-2 sm:mb-0 rounded-2xl sm:rounded-xl bg-card/50 transition-all hover:bg-card hover:shadow-md sm:flex-row sm:items-center sm:justify-between border border-transparent hover:border-border/60"
+                  className="group flex flex-col gap-4 p-4 mb-2 sm:mb-0 rounded-lg sm:rounded-md bg-card/50 transition-all hover:bg-card hover:shadow-md sm:flex-row sm:items-center sm:justify-between border border-transparent hover:border-border/60"
                 >
                   <div className="flex flex-1 items-start gap-4">
-                    <div className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 shadow-inner sm:flex">
+                    <div className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-md bg-primary/10 shadow-inner sm:flex">
                       <Package className="h-6 w-6 text-primary" />
                     </div>
                     <div>

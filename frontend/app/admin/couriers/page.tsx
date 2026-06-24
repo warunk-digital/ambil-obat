@@ -65,12 +65,12 @@ export default function AdminCouriersPage() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {couriers.length === 0 ? (
-          <div className="col-span-full rounded-2xl border border-dashed p-8 text-center text-muted-foreground">
+          <div className="col-span-full rounded-lg border border-dashed p-8 text-center text-muted-foreground">
             Belum ada kurir terdaftar.
           </div>
         ) : (
           couriers.map((c) => (
-            <div key={c.id} className="flex items-center gap-4 rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
+            <div key={c.id} className="flex items-center gap-4 rounded-lg border border-border/60 bg-card p-5 shadow-sm">
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-indigo-100">
                 <span className="text-lg font-bold text-indigo-600">
                   {c.user.full_name.charAt(0).toUpperCase()}
@@ -96,7 +96,7 @@ export default function AdminCouriersPage() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {admins.map((a) => (
-          <div key={a.id} className="flex items-center gap-4 rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
+          <div key={a.id} className="flex items-center gap-4 rounded-lg border border-border/60 bg-card p-5 shadow-sm">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-100">
               <span className="text-lg font-bold text-emerald-600">
                 {a.user.full_name.charAt(0).toUpperCase()}

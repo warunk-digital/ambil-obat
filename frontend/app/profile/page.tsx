@@ -11,7 +11,6 @@ import {
   Phone,
   Mail,
   Shield,
-  Pill,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -87,11 +86,13 @@ export default function ProfilePage() {
         {/* App Info */}
         <div className="rounded-2xl border border-border/50 bg-card p-4 shadow-sm">
           <div className="flex items-center gap-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-              <Pill className="h-5 w-5 text-primary" />
-            </div>
+            <img
+              src="/Logo Sobat BG Putih.png"
+              alt="Sobat Logo"
+              className="h-10 w-10 object-contain rounded-xl shadow-sm border border-border/50 bg-white"
+            />
             <div>
-              <p className="text-sm font-medium">Ambil Obat</p>
+              <p className="text-sm font-medium">Sobat</p>
               <p className="text-[11px] text-muted-foreground">Versi 1.0.0</p>
             </div>
           </div>

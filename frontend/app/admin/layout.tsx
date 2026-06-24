@@ -100,7 +100,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <AdminNav />
       <main className="flex-1 pb-nav md:pb-0">
         {/* Konten tiap halaman admin akan berada di sini */}
-        <div className="min-h-[calc(105vh-3.5rem)] md:min-h-svh bg-background md:rounded-tl-2xl md:border-t md:border-l md:border-border/60 md:shadow-sm">
+        <div className="min-h-[calc(105vh-3.5rem)] md:min-h-svh bg-background md:rounded-tl-lg md:border-t md:border-l md:border-border/60 md:shadow-sm">
           {children}
         </div>
       </main>

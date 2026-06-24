@@ -320,7 +320,7 @@ export default function CourierRequestDetailPage({ params }: { params: Promise<{
                 <Store className="h-4 w-4" />
               </div>
               <div>
-                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Apotek (Ambil Obat)</p>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Apotek (Sobat)</p>
                 <p className="font-semibold">{request.pharmacy?.name}</p>
                 <p className="text-sm text-muted-foreground">{request.pharmacy?.address}</p>
               </div>

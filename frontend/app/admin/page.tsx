@@ -7,10 +7,6 @@ import { useAuth } from "@/components/auth-provider";
 import { formatRupiah, formatDate } from "@/lib/helpers";
 import { STATUS_CONFIG } from "@/lib/types";
 import { 
-  ClipboardList, 
-  Package, 
-  Truck, 
-  CheckCircle2, 
   Loader2,
   ChevronRight
 } from "lucide-react";
@@ -88,13 +84,6 @@ export default function AdminDashboardPage() {
     );
   }
 
-  const statCards = [
-    { label: "Pesanan Baru", value: stats.pending, icon: ClipboardList, color: "text-amber-600 bg-amber-50 border-amber-200" },
-    { label: "Diproses", value: stats.confirmed, icon: Package, color: "text-blue-600 bg-blue-50 border-blue-200" },
-    { label: "Diantar", value: stats.onDelivery, icon: Truck, color: "text-cyan-600 bg-cyan-50 border-cyan-200" },
-    { label: "Selesai", value: stats.delivered, icon: CheckCircle2, color: "text-emerald-600 bg-emerald-50 border-emerald-200" },
-  ];
-
   return (
     <div className="p-6">
       <div className="mb-8">
@@ -102,14 +91,62 @@ export default function AdminDashboardPage() {
         <p className="text-muted-foreground">{pharmacyName} • {formatDate(new Date().toISOString())}</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-        {statCards.map((stat, i) => (
-          <div key={i} className={`rounded-2xl border p-5 ${stat.color}`}>
-            <stat.icon className="mb-3 h-6 w-6 opacity-80" />
-            <p className="text-2xl font-bold leading-none">{stat.value}</p>
-            <p className="mt-1 text-xs font-medium opacity-80">{stat.label}</p>
+      {/* Cohesive Logistics Status Bar */}
+      <div className="rounded-lg border border-border/60 bg-card p-6 shadow-sm">
+        <h2 className="mb-5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">Alur Pengiriman Hari Ini</h2>
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          
+          {/* Step 1 */}
+          <div className="flex-1 flex items-center gap-4">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-amber-200/50 bg-amber-50/50 text-amber-600 font-bold text-lg dark:bg-amber-500/10 dark:border-amber-500/20">
+              {stats.pending}
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-foreground">Pesanan Baru</p>
+              <p className="text-[10px] text-muted-foreground/80 mt-0.5">Menunggu konfirmasi apotek</p>
+            </div>
           </div>
-        ))}
+
+          <div className="hidden md:block h-8 w-px bg-border/60 shrink-0 mx-2" />
+
+          {/* Step 2 */}
+          <div className="flex-1 flex items-center gap-4">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-blue-200/50 bg-blue-50/50 text-blue-600 font-bold text-lg dark:bg-blue-500/10 dark:border-blue-500/20">
+              {stats.confirmed}
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-foreground">Diproses</p>
+              <p className="text-[10px] text-muted-foreground/80 mt-0.5">Obat disiapkan & staf ready</p>
+            </div>
+          </div>
+
+          <div className="hidden md:block h-8 w-px bg-border/60 shrink-0 mx-2" />
+
+          {/* Step 3 */}
+          <div className="flex-1 flex items-center gap-4">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-cyan-200/50 bg-cyan-50/50 text-cyan-600 font-bold text-lg dark:bg-cyan-500/10 dark:border-cyan-500/20">
+              {stats.onDelivery}
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-foreground">Diantar</p>
+              <p className="text-[10px] text-muted-foreground/80 mt-0.5">Dalam perjalanan kurir</p>
+            </div>
+          </div>
+
+          <div className="hidden md:block h-8 w-px bg-border/60 shrink-0 mx-2" />
+
+          {/* Step 4 */}
+          <div className="flex-1 flex items-center gap-4">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-emerald-200/50 bg-emerald-50/50 text-emerald-600 font-bold text-lg dark:bg-emerald-500/10 dark:border-emerald-500/20">
+              {stats.delivered}
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-foreground">Selesai</p>
+              <p className="text-[10px] text-muted-foreground/80 mt-0.5">Telah sampai di tujuan</p>
+            </div>
+          </div>
+
+        </div>
       </div>
 
       <div className="mt-8 flex items-center justify-between">
@@ -119,51 +156,116 @@ export default function AdminDashboardPage() {
         </Link>
       </div>
 
-      <div className="mt-4 overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
+      <div className="mt-4 overflow-hidden rounded-lg border border-border/60 bg-card shadow-sm">
         {recentRequests.length === 0 ? (
           <div className="p-8 text-center text-sm text-muted-foreground">
             Belum ada pesanan hari ini.
           </div>
         ) : (
-          <div className="divide-y divide-border/50">
-            {recentRequests.map((req) => (
-              <Link 
-                key={req.id} 
-                href={`/admin/requests/${req.id}`}
-                className="flex items-center justify-between p-4 transition-colors hover:bg-muted/50 touch-active"
-              >
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-primary">{req.request_number}</span>
-                    {(() => {
-                      const statusInfo = STATUS_CONFIG[req.status as import("@/lib/types").DeliveryStatus];
-                      return (
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-sm border-collapse">
+                <thead>
+                  <tr className="border-b border-border/60 bg-muted/20 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    <th className="p-4">No. Request</th>
+                    <th className="p-4">Status</th>
+                    <th className="p-4">No. Obat</th>
+                    <th className="p-4">Tujuan / Alamat</th>
+                    <th className="p-4">Biaya</th>
+                    <th className="p-4 text-right">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/50">
+                  {recentRequests.map((req) => {
+                    const statusInfo = STATUS_CONFIG[req.status as import("@/lib/types").DeliveryStatus];
+                    return (
+                      <tr key={req.id} className="hover:bg-muted/40 transition-colors group">
+                        <td className="p-4 font-semibold text-primary">
+                          <Link href={`/admin/requests/${req.id}`}>
+                            {req.request_number}
+                          </Link>
+                        </td>
+                        <td className="p-4">
+                          <span 
+                            className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium border"
+                            style={{
+                              color: statusInfo?.textColor,
+                              backgroundColor: statusInfo?.bgColor + '60', // semi-transparent
+                              borderColor: statusInfo?.textColor + '30',
+                            }}
+                          >
+                            <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: statusInfo?.textColor }} />
+                            {statusInfo?.label}
+                          </span>
+                        </td>
+                        <td className="p-4 text-xs font-mono text-muted-foreground">{req.medicine_number}</td>
+                        <td className="p-4 text-xs max-w-xs truncate">
+                          <span className="font-medium text-foreground block">{req.address?.label}</span>
+                          <span className="text-muted-foreground truncate block">{req.address?.full_address}</span>
+                        </td>
+                        <td className="p-4">
+                          <div className="text-xs">
+                            <span className="font-semibold text-foreground">{formatRupiah(req.delivery_fee)}</span>
+                            <span className="text-[10px] text-muted-foreground block uppercase font-mono">{req.payment_status}</span>
+                          </div>
+                        </td>
+                        <td className="p-4 text-right">
+                          <Link 
+                            href={`/admin/requests/${req.id}`}
+                            className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-border bg-background hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+                          >
+                            <ChevronRight className="h-4 w-4" />
+                          </Link>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Native List View */}
+            <div className="block md:hidden divide-y divide-border/50">
+              {recentRequests.map((req) => {
+                const statusInfo = STATUS_CONFIG[req.status as import("@/lib/types").DeliveryStatus];
+                return (
+                  <Link 
+                    key={req.id} 
+                    href={`/admin/requests/${req.id}`}
+                    className="flex items-center justify-between p-4 transition-colors active:bg-muted/60"
+                  >
+                    <div className="min-w-0 flex-1 pr-3">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-primary text-sm">{req.request_number}</span>
                         <span 
-                          className="rounded-full px-2 py-0.5 text-[10px] font-medium tracking-wider"
+                          className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium border"
                           style={{
                             color: statusInfo?.textColor,
-                            backgroundColor: statusInfo?.bgColor,
+                            backgroundColor: statusInfo?.bgColor + '60',
+                            borderColor: statusInfo?.textColor + '20',
                           }}
                         >
-                          {statusInfo?.icon} {statusInfo?.label}
+                          <span className="h-1 w-1 rounded-full" style={{ backgroundColor: statusInfo?.textColor }} />
+                          {statusInfo?.label}
                         </span>
-                      );
-                    })()}
-                  </div>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    No. Obat: {req.medicine_number} • {req.address?.label}
-                  </p>
-                </div>
-                <div className="flex items-center gap-4 text-right">
-                  <div className="hidden sm:block">
-                    <p className="text-sm font-semibold">{formatRupiah(req.delivery_fee)}</p>
-                    <p className="text-[10px] text-muted-foreground uppercase">{req.payment_status}</p>
-                  </div>
-                  <ChevronRight className="h-5 w-5 text-muted-foreground/40" />
-                </div>
-              </Link>
-            ))}
-          </div>
+                      </div>
+                      <p className="mt-1 text-xs text-muted-foreground truncate">
+                        No. Obat: {req.medicine_number} • {req.address?.label}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0 text-right">
+                      <div>
+                        <p className="text-xs font-semibold text-foreground">{formatRupiah(req.delivery_fee)}</p>
+                        <p className="text-[9px] text-muted-foreground uppercase font-mono">{req.payment_status}</p>
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-muted-foreground/30" />
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </>
         )}
       </div>
     </div>

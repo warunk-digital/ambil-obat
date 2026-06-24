@@ -6,12 +6,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
-  Pill,
   Eye,
   EyeOff,
   ArrowRight,
   Loader2,
-  Truck,
 } from "lucide-react";
 
 export default function LoginPage() {
@@ -103,15 +101,14 @@ function LoginForm() {
       {/* Header Illustration */}
       <div className="flex flex-col items-center px-6 pt-12 pb-8">
         <div className="relative mb-6">
-          <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-primary to-primary/80 shadow-lg shadow-primary/25">
-            <Pill className="h-10 w-10 text-primary-foreground" />
-          </div>
-          <div className="absolute -right-2 -bottom-2 flex h-9 w-9 items-center justify-center rounded-xl bg-secondary shadow-md">
-            <Truck className="h-5 w-5 text-primary" />
-          </div>
+          <img
+            src="/Logo Sobat BG Putih.png"
+            alt="Sobat Logo"
+            className="h-20 w-20 object-contain rounded-3xl shadow-lg shadow-black/10 border border-border/50 bg-white"
+          />
         </div>
         <h1 className="gradient-text text-2xl font-bold tracking-tight">
-          Ambil Obat
+          Sobat
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Antar obat dari apotek ke rumah Anda
@@ -121,7 +118,7 @@ function LoginForm() {
       {/* Login Form */}
       <div className="flex-1 px-6">
         <div className="mx-auto max-w-sm">
-          <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-xl shadow-black/5">
+          <div className="rounded-lg border border-border/60 bg-card p-6 shadow-xl shadow-black/5">
             <h2 className="mb-1 text-lg font-semibold">Masuk</h2>
             <p className="mb-6 text-sm text-muted-foreground">
               Masukkan email dan password Anda
@@ -143,7 +140,7 @@ function LoginForm() {
                   placeholder="nama@email.com"
                   required
                   autoComplete="email"
-                  className="flex h-11 w-full rounded-xl border border-input bg-background px-4 text-sm transition-colors placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
+                  className="flex h-11 w-full rounded-md border border-input bg-background px-4 text-sm transition-colors placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
                 />
               </div>
 
@@ -163,7 +160,7 @@ function LoginForm() {
                     placeholder="••••••••"
                     required
                     autoComplete="current-password"
-                    className="flex h-11 w-full rounded-xl border border-input bg-background px-4 pr-11 text-sm transition-colors placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
+                    className="flex h-11 w-full rounded-md border border-input bg-background px-4 pr-11 text-sm transition-colors placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
                   />
                   <button
                     type="button"
@@ -188,7 +185,7 @@ function LoginForm() {
 
               <Button
                 type="submit"
-                className="h-11 w-full rounded-xl text-sm font-semibold"
+                className="h-11 w-full rounded-md text-sm font-semibold"
                 disabled={loading}
               >
                 {loading ? (
