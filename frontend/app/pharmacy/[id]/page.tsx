@@ -507,7 +507,7 @@ export default function PharmacyDetailPage({
                   onChange={(e) => setPatientDob(e.target.value)}
                   required
                   className={cn(
-                    "block h-12 w-full rounded-md border border-input bg-card px-4 text-sm shadow-sm transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none",
+                    "flex items-center h-12 w-full rounded-md border border-input bg-card px-4 text-sm shadow-sm transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none",
                     !patientDob ? "text-transparent" : "text-foreground"
                   )}
                   style={{
