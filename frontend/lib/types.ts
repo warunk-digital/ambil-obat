@@ -99,6 +99,7 @@ export interface DeliveryRequest {
   patient_name?: string | null;
   patient_dob?: string | null;
   doctor_name?: string | null;
+  pickup_date?: string | null;
   // Joined fields
   pharmacy?: Pharmacy;
   address?: Address;

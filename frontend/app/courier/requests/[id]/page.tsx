@@ -401,6 +401,13 @@ export default function CourierRequestDetailPage({ params }: { params: Promise<{
               </div>
             )}
             
+            {request.pickup_date && (
+              <div>
+                <p className="text-xs text-muted-foreground">Tgl Pengambilan Obat</p>
+                <p className="font-semibold">{formatDate(request.pickup_date)}</p>
+              </div>
+            )}
+            
             {request.medicine_description && (
               <div>
                 <p className="text-xs text-muted-foreground">Deskripsi Obat</p>

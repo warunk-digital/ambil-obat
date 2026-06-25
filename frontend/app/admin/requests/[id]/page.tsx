@@ -402,6 +402,16 @@ export default function AdminRequestDetailPage({ params }: { params: Promise<{ i
                 </div>
               )}
 
+              {request.pickup_date && (
+                <div className="flex items-start gap-3">
+                  <Calendar className="mt-0.5 h-5 w-5 text-primary" />
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Tgl Pengambilan Obat</p>
+                    <p className="text-base font-semibold">{formatDate(request.pickup_date)}</p>
+                  </div>
+                </div>
+              )}
+
               {request.medicine_description && (
                 <div className="flex items-start gap-3">
                   <Package className="mt-0.5 h-5 w-5 text-primary" />

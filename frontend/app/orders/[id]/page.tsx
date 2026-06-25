@@ -319,6 +319,16 @@ export default function OrderDetailPage({
               </div>
             )}
 
+            {request.pickup_date && (
+              <div className="flex items-start gap-3">
+                <Calendar className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                <div>
+                  <p className="text-xs text-muted-foreground">Tgl Pengambilan Obat</p>
+                  <p className="text-sm font-medium">{formatDate(request.pickup_date)}</p>
+                </div>
+              </div>
+            )}
+
             {request.medicine_description && (
               <div className="flex items-start gap-3">
                 <Package className="mt-0.5 h-4 w-4 shrink-0 text-primary" />

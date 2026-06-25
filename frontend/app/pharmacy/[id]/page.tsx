@@ -58,6 +58,7 @@ export default function PharmacyDetailPage({
   const [patientName, setPatientName] = useState("");
   const [patientDob, setPatientDob] = useState("");
   const [doctorName, setDoctorName] = useState("");
+  const [pickupDate, setPickupDate] = useState("");
   const [isPatientInitialized, setIsPatientInitialized] = useState(false);
   const [medicineDescription, setMedicineDescription] = useState("");
   const [selectedAddressId, setSelectedAddressId] = useState("");
@@ -313,6 +314,11 @@ export default function PharmacyDetailPage({
       return;
     }
 
+    if (!pickupDate.trim()) {
+      setError("Tanggal pengambilan obat wajib diisi");
+      return;
+    }
+
     if (!selectedAddressId) {
       setError("Pilih alamat pengiriman");
       return;
@@ -334,6 +340,7 @@ export default function PharmacyDetailPage({
         patient_name: patientName.trim(),
         patient_dob: patientDob.trim(),
         doctor_name: doctorName.trim(),
+        pickup_date: pickupDate.trim(),
         medicine_description: medicineDescription.trim() || null,
         delivery_fee: deliveryFee || 0,
         distance_km: routeDistanceKm,
@@ -537,6 +544,36 @@ export default function PharmacyDetailPage({
                 required
                 className="flex h-12 w-full rounded-md border border-input bg-card px-4 text-sm shadow-sm transition-colors placeholder:text-muted-foreground/50 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
               />
+            </div>
+
+            {/* Tanggal Pengambilan Obat */}
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-sm font-medium">
+                <Calendar className="h-4 w-4 text-primary" />
+                Tanggal Pengambilan Obat <span className="text-destructive">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type="date"
+                  value={pickupDate}
+                  onChange={(e) => setPickupDate(e.target.value)}
+                  required
+                  min={new Date().toISOString().split("T")[0]}
+                  className={cn(
+                    "flex items-center h-12 w-full rounded-md border border-input bg-card px-4 text-sm shadow-sm transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none",
+                    !pickupDate ? "text-transparent" : "text-foreground"
+                  )}
+                  style={{
+                    WebkitAppearance: "none",
+                    minWidth: "100%",
+                  }}
+                />
+                {!pickupDate && (
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground/50 pointer-events-none">
+                    Pilih tanggal pengambilan obat...
+                  </span>
+                )}
+              </div>
             </div>
 
             {/* Medicine Description */}
