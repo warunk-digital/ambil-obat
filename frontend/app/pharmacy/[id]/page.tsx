@@ -500,13 +500,27 @@ export default function PharmacyDetailPage({
                 <Calendar className="h-4 w-4 text-primary" />
                 Tgl Lahir <span className="text-destructive">*</span>
               </label>
-              <input
-                type="date"
-                value={patientDob}
-                onChange={(e) => setPatientDob(e.target.value)}
-                required
-                className="block h-12 w-full rounded-md border border-input bg-card px-4 text-sm shadow-sm transition-colors placeholder:text-muted-foreground/50 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
-              />
+              <div className="relative">
+                <input
+                  type="date"
+                  value={patientDob}
+                  onChange={(e) => setPatientDob(e.target.value)}
+                  required
+                  className={cn(
+                    "block h-12 w-full rounded-md border border-input bg-card px-4 text-sm shadow-sm transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none",
+                    !patientDob ? "text-transparent" : "text-foreground"
+                  )}
+                  style={{
+                    WebkitAppearance: "none",
+                    minWidth: "100%",
+                  }}
+                />
+                {!patientDob && (
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground/50 pointer-events-none">
+                    Pilih tanggal lahir...
+                  </span>
+                )}
+              </div>
             </div>
 
             {/* Nama Dokter */}
