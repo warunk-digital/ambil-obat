@@ -505,7 +505,7 @@ export default function PharmacyDetailPage({
                 value={patientDob}
                 onChange={(e) => setPatientDob(e.target.value)}
                 required
-                className="flex h-12 w-full rounded-md border border-input bg-card px-4 text-sm shadow-sm transition-colors placeholder:text-muted-foreground/50 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
+                className="block h-12 w-full rounded-md border border-input bg-card px-4 text-sm shadow-sm transition-colors placeholder:text-muted-foreground/50 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
               />
             </div>
 
