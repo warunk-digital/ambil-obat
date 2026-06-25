@@ -54,6 +54,7 @@
 }
 
 :root {
+    color-scheme: light;
     /* Medical green/teal theme */
     --background: oklch(0.985 0.002 155);
     --foreground: oklch(0.175 0.015 250);
