@@ -22,13 +22,15 @@ import {
   Navigation,
   Pill,
   Loader2,
-  Hash,
   FileText,
   StickyNote,
   ChevronDown,
   CheckCircle2,
   AlertCircle,
   Truck,
+  User,
+  Calendar,
+  Stethoscope,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LocationSearch } from "@/components/location-search";
@@ -41,7 +43,7 @@ export default function PharmacyDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const router = useRouter();
   const supabase = createClient();
 
@@ -53,12 +55,22 @@ export default function PharmacyDetailPage({
   const [requestNumber, setRequestNumber] = useState("");
 
   // Form state
-  const [medicineNumber, setMedicineNumber] = useState("");
+  const [patientName, setPatientName] = useState("");
+  const [patientDob, setPatientDob] = useState("");
+  const [doctorName, setDoctorName] = useState("");
+  const [isPatientInitialized, setIsPatientInitialized] = useState(false);
   const [medicineDescription, setMedicineDescription] = useState("");
   const [selectedAddressId, setSelectedAddressId] = useState("");
   const [notes, setNotes] = useState("");
   const [error, setError] = useState("");
   const [showAddressForm, setShowAddressForm] = useState(false);
+
+  useEffect(() => {
+    if (profile?.full_name && !isPatientInitialized) {
+      setPatientName(profile.full_name);
+      setIsPatientInitialized(true);
+    }
+  }, [profile, isPatientInitialized]);
 
   // Routing and Fee state
   const [routeDistanceKm, setRouteDistanceKm] = useState<number | null>(null);
@@ -286,8 +298,18 @@ export default function PharmacyDetailPage({
       return;
     }
 
-    if (!medicineNumber.trim()) {
-      setError("Nomor obat wajib diisi");
+    if (!patientName.trim()) {
+      setError("Nama pasien wajib diisi");
+      return;
+    }
+
+    if (!patientDob.trim()) {
+      setError("Tanggal lahir wajib diisi");
+      return;
+    }
+
+    if (!doctorName.trim()) {
+      setError("Nama dokter wajib diisi");
       return;
     }
 
@@ -309,7 +331,9 @@ export default function PharmacyDetailPage({
         user_id: user.id,
         pharmacy_id: id,
         address_id: selectedAddressId,
-        medicine_number: medicineNumber.trim(),
+        patient_name: patientName.trim(),
+        patient_dob: patientDob.trim(),
+        doctor_name: doctorName.trim(),
         medicine_description: medicineDescription.trim() || null,
         delivery_fee: deliveryFee || 0,
         distance_km: routeDistanceKm,
@@ -441,23 +465,55 @@ export default function PharmacyDetailPage({
         <div className="mx-auto max-w-lg">
           <h2 className="mb-1 text-base font-semibold">Request Antar Obat</h2>
           <p className="mb-6 text-xs text-muted-foreground">
-            Masukkan nomor obat yang sudah siap diambil di apotek
+            Masukkan detail informasi pasien dan dokter untuk pengantaran obat
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Medicine Number */}
+            {/* Nama Pasien */}
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-sm font-medium">
-                <Hash className="h-4 w-4 text-primary" />
-                Nomor Obat <span className="text-destructive">*</span>
+                <User className="h-4 w-4 text-primary" />
+                Nama Pasien <span className="text-destructive">*</span>
               </label>
               <input
                 type="text"
-                value={medicineNumber}
-                onChange={(e) => setMedicineNumber(e.target.value)}
-                placeholder="Contoh: A-001, 1234, dll"
+                value={patientName}
+                onChange={(e) => setPatientName(e.target.value)}
+                placeholder="Nama lengkap pasien"
                 required
-                className="flex h-12 w-full rounded-xl border border-input bg-card px-4 text-sm shadow-sm transition-colors placeholder:text-muted-foreground/50 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
+                className="flex h-12 w-full rounded-md border border-input bg-card px-4 text-sm shadow-sm transition-colors placeholder:text-muted-foreground/50 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
+              />
+              <p className="text-[11px] text-muted-foreground">Otomatis tersimpan menggunakan nama profil Anda, tetapi dapat disesuaikan.</p>
+            </div>
+
+            {/* Tanggal Lahir */}
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-sm font-medium">
+                <Calendar className="h-4 w-4 text-primary" />
+                Tgl Lahir <span className="text-destructive">*</span>
+              </label>
+              <input
+                type="date"
+                value={patientDob}
+                onChange={(e) => setPatientDob(e.target.value)}
+                required
+                className="flex h-12 w-full rounded-md border border-input bg-card px-4 text-sm shadow-sm transition-colors placeholder:text-muted-foreground/50 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
+              />
+            </div>
+
+            {/* Nama Dokter */}
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-sm font-medium">
+                <Stethoscope className="h-4 w-4 text-primary" />
+                Nama Dokter <span className="text-destructive">*</span>
+              </label>
+              <input
+                type="text"
+                value={doctorName}
+                onChange={(e) => setDoctorName(e.target.value)}
+                placeholder="Nama dokter yang meresepkan"
+                required
+                className="flex h-12 w-full rounded-md border border-input bg-card px-4 text-sm shadow-sm transition-colors placeholder:text-muted-foreground/50 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
               />
             </div>
 
@@ -473,7 +529,7 @@ export default function PharmacyDetailPage({
                 value={medicineDescription}
                 onChange={(e) => setMedicineDescription(e.target.value)}
                 placeholder="Contoh: Obat flu dan batuk"
-                className="flex h-12 w-full rounded-xl border border-input bg-card px-4 text-sm shadow-sm transition-colors placeholder:text-muted-foreground/50 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
+                className="flex h-12 w-full rounded-md border border-input bg-card px-4 text-sm shadow-sm transition-colors placeholder:text-muted-foreground/50 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
               />
             </div>
 
@@ -690,7 +746,7 @@ export default function PharmacyDetailPage({
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Catatan untuk kurir..."
                 rows={2}
-                className="flex w-full rounded-xl border border-input bg-card px-4 py-3 text-sm shadow-sm transition-colors placeholder:text-muted-foreground/50 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none resize-none"
+                className="flex w-full rounded-md border border-input bg-card px-4 py-3 text-sm shadow-sm transition-colors placeholder:text-muted-foreground/50 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none resize-none"
               />
             </div>
 
@@ -751,7 +807,7 @@ export default function PharmacyDetailPage({
             {/* Submit */}
             <Button
               type="submit"
-              className="h-12 w-full rounded-2xl text-sm font-semibold shadow-lg shadow-primary/20"
+              className="h-12 w-full rounded-md text-sm font-semibold shadow-lg shadow-primary/20"
               disabled={submitting || isCalculatingRoute || !isOpen || !isWithinRadius}
             >
               {submitting || isCalculatingRoute ? (

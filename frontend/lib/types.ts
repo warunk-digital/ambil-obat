@@ -83,7 +83,7 @@ export interface DeliveryRequest {
   pharmacy_id: string;
   address_id: string;
   courier_id: string | null;
-  medicine_number: string;
+  medicine_number?: string | null;
   medicine_description: string | null;
   status: DeliveryStatus;
   delivery_fee: number;
@@ -96,6 +96,9 @@ export interface DeliveryRequest {
   delivered_at: string | null;
   created_at: string;
   cancel_reason?: string;
+  patient_name?: string | null;
+  patient_dob?: string | null;
+  doctor_name?: string | null;
   // Joined fields
   pharmacy?: Pharmacy;
   address?: Address;

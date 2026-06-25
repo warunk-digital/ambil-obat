@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/components/auth-provider";
-import { Loader2, Save, Store, MapPin, Banknote, AlertCircle, Clock } from "lucide-react";
+import { Loader2, Save, Store, MapPin, Banknote, AlertCircle, Clock, Upload, Trash2, Image } from "lucide-react";
 import type { Pharmacy } from "@/lib/types";
 
 const DAY_LABELS: Record<string, string> = {
@@ -54,6 +54,100 @@ export default function AdminSettingsPage() {
     fetchPharmacy();
   }, [user, supabase]);
 
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+
+  const convertToWebP = (file: File): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new window.Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          let width = img.width;
+          let height = img.height;
+
+          const MAX_SIZE = 600;
+          if (width > MAX_SIZE || height > MAX_SIZE) {
+            if (width > height) {
+              height = Math.round((height * MAX_SIZE) / width);
+              width = MAX_SIZE;
+            } else {
+              width = Math.round((width * MAX_SIZE) / height);
+              height = MAX_SIZE;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext("2d");
+          if (!ctx) {
+            reject(new Error("Canvas context is not available"));
+            return;
+          }
+
+          ctx.drawImage(img, 0, 0, width, height);
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                resolve(blob);
+              } else {
+                reject(new Error("Failed to convert image to WebP"));
+              }
+            },
+            "image/webp",
+            0.85
+          );
+        };
+        img.onerror = () => reject(new Error("Failed to load image"));
+        img.src = event.target?.result as string;
+      };
+      reader.onerror = () => reject(new Error("Failed to read file"));
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !pharmacy) return;
+
+    setUploadingLogo(true);
+    setMessage({ type: "", text: "" });
+
+    try {
+      const webpBlob = await convertToWebP(file);
+      const fileName = `logo-${Date.now()}.webp`;
+      const filePath = `${pharmacy.id}/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("pharmacy-logos")
+        .upload(filePath, webpBlob, {
+          contentType: "image/webp",
+          upsert: true,
+        });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from("pharmacy-logos")
+        .getPublicUrl(filePath);
+
+      setPharmacy({ ...pharmacy, logo_url: publicUrl });
+      setMessage({ type: "success", text: "Logo berhasil diunggah. Klik 'Simpan Perubahan' untuk menyimpannya permanen." });
+    } catch (err: any) {
+      console.error(err);
+      setMessage({ type: "error", text: "Gagal mengunggah logo: " + err.message });
+    } finally {
+      setUploadingLogo(false);
+    }
+  };
+
+  const handleLogoRemove = () => {
+    if (!pharmacy) return;
+    setPharmacy({ ...pharmacy, logo_url: null });
+    setMessage({ type: "success", text: "Logo dihapus. Klik 'Simpan Perubahan' untuk menyimpannya permanen." });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!pharmacy) return;
@@ -72,6 +166,7 @@ export default function AdminSettingsPage() {
         is_active: pharmacy.is_active,
         operating_hours: pharmacy.operating_hours,
         phone: pharmacy.phone,
+        logo_url: pharmacy.logo_url,
       })
       .eq("id", pharmacy.id);
 
@@ -139,6 +234,55 @@ export default function AdminSettingsPage() {
             </div>
             
             <div className="space-y-4">
+              {/* Logo Apotek */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Logo Apotek / Rumah Sakit</label>
+                <div className="flex items-center gap-4">
+                  <div className="relative flex h-20 w-20 shrink-0 items-center justify-center rounded-md border border-border bg-muted overflow-hidden">
+                    {uploadingLogo ? (
+                      <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                    ) : pharmacy.logo_url ? (
+                      <img
+                        src={pharmacy.logo_url}
+                        alt="Logo Apotek"
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <Store className="h-8 w-8 text-muted-foreground" />
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                      <label className="flex h-9 cursor-pointer items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-semibold shadow-sm transition-colors hover:bg-accent">
+                        <Upload className="h-3.5 w-3.5" />
+                        Unggah Gambar
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={handleLogoUpload}
+                          disabled={uploadingLogo}
+                        />
+                      </label>
+                      {pharmacy.logo_url && (
+                        <button
+                          type="button"
+                          onClick={handleLogoRemove}
+                          disabled={uploadingLogo}
+                          className="flex h-9 items-center justify-center gap-1.5 rounded-md border border-destructive/20 bg-destructive/5 px-3 text-xs font-semibold text-destructive transition-colors hover:bg-destructive/10 disabled:opacity-50"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                          Hapus
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-[11px] text-muted-foreground">
+                      Format gambar akan dikonversi ke `.webp` secara otomatis (lebar maks. 600px).
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <label className="text-sm font-medium">Nama Apotek</label>
                 <input

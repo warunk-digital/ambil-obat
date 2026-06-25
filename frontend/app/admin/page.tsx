@@ -170,7 +170,7 @@ export default function AdminDashboardPage() {
                   <tr className="border-b border-border/60 bg-muted/20 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                     <th className="p-4">No. Request</th>
                     <th className="p-4">Status</th>
-                    <th className="p-4">No. Obat</th>
+                    <th className="p-4">Nama Pasien</th>
                     <th className="p-4">Tujuan / Alamat</th>
                     <th className="p-4">Biaya</th>
                     <th className="p-4 text-right">Aksi</th>
@@ -199,7 +199,7 @@ export default function AdminDashboardPage() {
                             {statusInfo?.label}
                           </span>
                         </td>
-                        <td className="p-4 text-xs font-mono text-muted-foreground">{req.medicine_number}</td>
+                        <td className="p-4 text-xs font-medium text-foreground">{req.patient_name || "-"}</td>
                         <td className="p-4 text-xs max-w-xs truncate">
                           <span className="font-medium text-foreground block">{req.address?.label}</span>
                           <span className="text-muted-foreground truncate block">{req.address?.full_address}</span>
@@ -251,7 +251,7 @@ export default function AdminDashboardPage() {
                         </span>
                       </div>
                       <p className="mt-1 text-xs text-muted-foreground truncate">
-                        No. Obat: {req.medicine_number} • {req.address?.label}
+                        Pasien: {req.patient_name || "-"} • {req.address?.label}
                       </p>
                     </div>
                     <div className="flex items-center gap-2 shrink-0 text-right">

@@ -17,7 +17,10 @@ import {
   Clock,
   Package,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  User,
+  Calendar,
+  Stethoscope
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import RouteMap from "@/components/route-map";
@@ -377,10 +380,26 @@ export default function CourierRequestDetailPage({ params }: { params: Promise<{
           <h3 className="mb-3 text-sm font-bold">Detail Pesanan</h3>
           
           <div className="space-y-3 text-sm">
-            <div>
-              <p className="text-xs text-muted-foreground">Nomor Obat</p>
-              <p className="font-medium">{request.medicine_number}</p>
-            </div>
+            {request.patient_name && (
+              <div>
+                <p className="text-xs text-muted-foreground">Nama Pasien</p>
+                <p className="font-semibold">{request.patient_name}</p>
+              </div>
+            )}
+
+            {request.patient_dob && (
+              <div>
+                <p className="text-xs text-muted-foreground">Tgl Lahir</p>
+                <p className="font-semibold">{formatDate(request.patient_dob)}</p>
+              </div>
+            )}
+
+            {request.doctor_name && (
+              <div>
+                <p className="text-xs text-muted-foreground">Nama Dokter</p>
+                <p className="font-semibold">{request.doctor_name}</p>
+              </div>
+            )}
             
             {request.medicine_description && (
               <div>

@@ -18,7 +18,6 @@ import type { DeliveryRequest, DeliveryStatus, RequestStatusLog } from "@/lib/ty
 import {
   ArrowLeft,
   MapPin,
-  Hash,
   Truck,
   Phone,
   MessageCircle,
@@ -28,6 +27,9 @@ import {
   CheckCircle2,
   Copy,
   Check,
+  User,
+  Calendar,
+  Stethoscope,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import RouteMap from "@/components/route-map";
@@ -287,13 +289,35 @@ export default function OrderDetailPage({
           <h3 className="mb-3 text-sm font-semibold">Informasi Pesanan</h3>
 
           <div className="space-y-3">
-            <div className="flex items-start gap-3">
-              <Hash className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-              <div>
-                <p className="text-xs text-muted-foreground">Nomor Obat</p>
-                <p className="text-sm font-medium">{request.medicine_number}</p>
+            {request.patient_name && (
+              <div className="flex items-start gap-3">
+                <User className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                <div>
+                  <p className="text-xs text-muted-foreground">Nama Pasien</p>
+                  <p className="text-sm font-medium">{request.patient_name}</p>
+                </div>
               </div>
-            </div>
+            )}
+
+            {request.patient_dob && (
+              <div className="flex items-start gap-3">
+                <Calendar className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                <div>
+                  <p className="text-xs text-muted-foreground">Tgl Lahir</p>
+                  <p className="text-sm font-medium">{formatDate(request.patient_dob)}</p>
+                </div>
+              </div>
+            )}
+
+            {request.doctor_name && (
+              <div className="flex items-start gap-3">
+                <Stethoscope className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                <div>
+                  <p className="text-xs text-muted-foreground">Nama Dokter</p>
+                  <p className="text-sm font-medium">{request.doctor_name}</p>
+                </div>
+              </div>
+            )}
 
             {request.medicine_description && (
               <div className="flex items-start gap-3">
@@ -315,7 +339,7 @@ export default function OrderDetailPage({
                   
                   {request.pharmacy.phone && (
                     <a 
-                      href={`https://wa.me/${request.pharmacy.phone.replace(/^0/, '62')}?text=${encodeURIComponent(`Halo ${request.pharmacy.name}, saya ingin menanyakan pesanan ${request.request_number} atau Nomor Obat ${request.medicine_number}`)}`}
+                      href={`https://wa.me/${request.pharmacy.phone.replace(/^0/, '62')}?text=${encodeURIComponent(`Halo ${request.pharmacy.name}, saya ingin menanyakan pesanan ${request.request_number}`)}`}
                       target="_blank"
                       rel="noreferrer"
                       className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-50 py-2.5 text-xs font-semibold text-emerald-600 transition-colors hover:bg-emerald-100"

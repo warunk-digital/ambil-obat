@@ -7,7 +7,7 @@ import { useAuth } from "@/components/auth-provider";
 import { formatDate, formatTime } from "@/lib/helpers";
 import { STATUS_CONFIG } from "@/lib/types";
 import type { DeliveryRequest, DeliveryStatus } from "@/lib/types";
-import { Loader2, Search, ChevronRight, Package, Hash, ClipboardList } from "lucide-react";
+import { Loader2, Search, ChevronRight, Package, ClipboardList } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function AdminRequestsPage() {
@@ -72,7 +72,8 @@ export default function AdminRequestsPage() {
   const filteredRequests = requests.filter(
     (req) => 
       req.request_number.toLowerCase().includes(search.toLowerCase()) ||
-      req.medicine_number.toLowerCase().includes(search.toLowerCase())
+      (req.patient_name || "").toLowerCase().includes(search.toLowerCase()) ||
+      (req.customer?.full_name || "").toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -149,8 +150,10 @@ export default function AdminRequestsPage() {
                       </div>
                       
                       <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1 font-medium bg-muted px-2 py-0.5 rounded-md"><Hash className="h-3 w-3" /> {req.medicine_number}</span>
-                        <span className="flex items-center">Pasien: <span className="ml-1 font-medium text-foreground/80">{req.customer?.full_name}</span></span>
+                        <span className="flex items-center">Pasien: <span className="ml-1 font-medium text-foreground/80">{req.patient_name || req.customer?.full_name}</span></span>
+                        {req.doctor_name && (
+                          <span className="flex items-center">Dokter: <span className="ml-1 font-medium text-foreground/80">{req.doctor_name}</span></span>
+                        )}
                         <span className="flex items-center">{formatDate(req.created_at)} {formatTime(req.created_at)}</span>
                       </div>
                     </div>

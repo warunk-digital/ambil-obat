@@ -11,7 +11,6 @@ import type { DeliveryRequest, DeliveryStatus, User } from "@/lib/types";
 import { 
   ArrowLeft, 
   MapPin, 
-  Hash, 
   Truck, 
   User as UserIcon,
   Phone,
@@ -21,7 +20,9 @@ import {
   Clock,
   CheckCircle2,
   AlertCircle,
-  Navigation
+  Navigation,
+  Calendar,
+  Stethoscope
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import RouteMap from "@/components/route-map";
@@ -371,13 +372,35 @@ export default function AdminRequestDetailPage({ params }: { params: Promise<{ i
             <h3 className="mb-4 font-semibold">Informasi Obat & Tujuan</h3>
             
             <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <Hash className="mt-0.5 h-5 w-5 text-primary" />
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Nomor Obat</p>
-                  <p className="text-lg font-bold">{request.medicine_number}</p>
+              {request.patient_name && (
+                <div className="flex items-start gap-3">
+                  <UserIcon className="mt-0.5 h-5 w-5 text-primary" />
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Nama Pasien</p>
+                    <p className="text-base font-semibold">{request.patient_name}</p>
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {request.patient_dob && (
+                <div className="flex items-start gap-3">
+                  <Calendar className="mt-0.5 h-5 w-5 text-primary" />
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Tgl Lahir</p>
+                    <p className="text-base font-semibold">{formatDate(request.patient_dob)}</p>
+                  </div>
+                </div>
+              )}
+
+              {request.doctor_name && (
+                <div className="flex items-start gap-3">
+                  <Stethoscope className="mt-0.5 h-5 w-5 text-primary" />
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Nama Dokter</p>
+                    <p className="text-base font-semibold">{request.doctor_name}</p>
+                  </div>
+                </div>
+              )}
 
               {request.medicine_description && (
                 <div className="flex items-start gap-3">
