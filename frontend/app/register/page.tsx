@@ -19,7 +19,9 @@ export default function RegisterPage() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -36,7 +38,25 @@ export default function RegisterPage() {
       return;
     }
 
+    if (password !== confirmPassword) {
+      setError("Password dan Konfirmasi Password tidak cocok");
+      setLoading(false);
+      return;
+    }
+
     const supabase = createClient();
+
+    // Check if email already registered in Supabase Auth via RPC helper
+    const { data: emailExists, error: checkError } = await supabase
+      .rpc("check_email_exists", { email_to_check: email.trim().toLowerCase() });
+
+    if (checkError) {
+      console.error("Error checking email availability:", checkError);
+    } else if (emailExists) {
+      setError("Email sudah terdaftar. Silakan gunakan email lain atau masuk.");
+      setLoading(false);
+      return;
+    }
     const { error: authError } = await supabase.auth.signUp({
       email,
       password,
@@ -183,6 +203,37 @@ export default function RegisterPage() {
                     aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
                   >
                     {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="confirmPassword" className="text-sm font-medium">
+                  Konfirmasi Password
+                </label>
+                <div className="relative">
+                  <input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Ulangi password Anda"
+                    required
+                    minLength={6}
+                    autoComplete="new-password"
+                    className="flex h-11 w-full rounded-md border border-input bg-background px-4 pr-11 text-sm transition-colors placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+                    aria-label={showConfirmPassword ? "Sembunyikan password" : "Tampilkan password"}
+                  >
+                    {showConfirmPassword ? (
                       <EyeOff className="h-4 w-4" />
                     ) : (
                       <Eye className="h-4 w-4" />
