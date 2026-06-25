@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import {
   Eye,
   EyeOff,
-  ArrowRight,
   Loader2,
 } from "lucide-react";
 
@@ -185,14 +184,10 @@ function LoginForm() {
 
               <Button
                 type="submit"
-                className="h-11 w-full rounded-md text-sm font-semibold"
+                className="h-11 w-full rounded-md text-sm font-semibold flex items-center justify-center"
                 disabled={loading}
               >
-                {loading ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <ArrowRight className="mr-2 h-4 w-4" />
-                )}
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {loading ? "Memproses..." : "Masuk"}
               </Button>
             </form>
