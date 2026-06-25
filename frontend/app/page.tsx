@@ -40,7 +40,7 @@ export default function HomePage() {
           });
         },
         () => {
-          setLocationError("Izinkan akses lokasi untuk melihat apotek terdekat");
+          setLocationError("Izinkan akses lokasi untuk melihat mitra layanan terdekat");
         },
       );
     }
@@ -124,7 +124,7 @@ export default function HomePage() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Cari apotek..."
+              placeholder="Cari mitra layanan..."
               className="h-12 w-full rounded-2xl bg-card pl-11 pr-4 text-sm shadow-lg shadow-black/10 transition-all placeholder:text-muted-foreground/50 focus:ring-2 focus:ring-white/30 focus:outline-none"
             />
           </div>
@@ -165,10 +165,10 @@ export default function HomePage() {
       <div className="px-6 pt-6 pb-nav">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-base font-semibold">
-            Apotek {userLocation ? "Terdekat" : "Tersedia"}
+            Mitra Layanan {userLocation ? "Terdekat" : "Tersedia"}
           </h2>
           <span className="text-xs text-muted-foreground">
-            {filteredPharmacies.length} apotek
+            {filteredPharmacies.length} mitra layanan
           </span>
         </div>
 
@@ -186,11 +186,11 @@ export default function HomePage() {
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-muted">
               <Pill className="h-8 w-8 text-muted-foreground" />
             </div>
-            <p className="mt-4 text-sm font-medium">Tidak ada apotek ditemukan</p>
+            <p className="mt-4 text-sm font-medium">Tidak ada mitra layanan ditemukan</p>
             <p className="mt-1 text-xs text-muted-foreground">
               {searchQuery
                 ? "Coba ubah kata kunci pencarian"
-                : "Belum ada apotek terdaftar di area ini"}
+                : "Belum ada mitra layanan terdaftar di area ini"}
             </p>
           </div>
         ) : (
