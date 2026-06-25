@@ -355,8 +355,16 @@ export default function SuperAdminPharmaciesPage() {
           <div key={pharmacy.id} className="rounded-lg border border-slate-200 bg-white/70 backdrop-blur-xl p-5 shadow-sm transition-all hover:shadow-md">
             <div className="mb-3 flex items-start justify-between gap-3">
               <div className="flex items-center gap-3 overflow-hidden">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 shadow-inner">
-                  <Store className="h-5 w-5" />
+                <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 shadow-inner overflow-hidden">
+                  {pharmacy.logo_url ? (
+                    <img
+                      src={pharmacy.logo_url}
+                      alt={pharmacy.name}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <Store className="h-5 w-5" />
+                  )}
                 </div>
                 <div className="overflow-hidden">
                   <h3 className="truncate font-bold text-slate-900">{pharmacy.name}</h3>

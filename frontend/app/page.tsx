@@ -211,8 +211,16 @@ export default function HomePage() {
                   )}
                 >
                   {/* Pharmacy Avatar */}
-                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5">
-                    <Pill className="h-7 w-7 text-primary" />
+                  <div className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 overflow-hidden">
+                    {pharmacy.logo_url ? (
+                      <img
+                        src={pharmacy.logo_url}
+                        alt={pharmacy.name}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <Pill className="h-7 w-7 text-primary" />
+                    )}
                   </div>
 
                   {/* Info */}

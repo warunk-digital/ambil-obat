@@ -424,8 +424,16 @@ export default function PharmacyDetailPage({
         </button>
 
         <div className="relative flex items-center gap-4">
-          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm">
-            <Pill className="h-8 w-8 text-primary-foreground" />
+          <div className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm overflow-hidden">
+            {pharmacy.logo_url ? (
+              <img
+                src={pharmacy.logo_url}
+                alt={pharmacy.name}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <Pill className="h-8 w-8 text-primary-foreground" />
+            )}
           </div>
           <div>
             <h1 className="text-lg font-bold text-primary-foreground">
