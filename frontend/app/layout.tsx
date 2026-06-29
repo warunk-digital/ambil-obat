@@ -5,6 +5,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/components/auth-provider";
 import { cn } from "@/lib/utils";
+import PwaRegister from "@/components/PwaRegister";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -17,6 +18,7 @@ export const metadata: Metadata = {
     "Layanan antar obat dari apotek ke rumah Anda. Cukup masukkan nomor obat, obat diantar oleh kurir apotek.",
   keywords: ["antar obat", "apotek", "delivery", "obat", "kesehatan"],
   authors: [{ name: "Sobat" }],
+  manifest: "/manifest.json",
 };
 
 export const viewport: Viewport = {
@@ -38,6 +40,7 @@ export default function RootLayout({
       <body className="min-h-svh">
         <ThemeProvider>
           <AuthProvider>{children}</AuthProvider>
+          <PwaRegister />
         </ThemeProvider>
       </body>
     </html>

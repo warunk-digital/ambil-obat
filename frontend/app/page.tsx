@@ -20,6 +20,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import InstallPrompt from "@/components/InstallPrompt";
 
 export default function HomePage() {
   const { user, profile, loading: authLoading } = useAuth();
@@ -100,6 +101,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-svh bg-background">
+      <InstallPrompt />
       {/* Hero Header */}
       <div className="relative overflow-hidden rounded-b-[2rem] bg-gradient-to-br from-primary via-primary/90 to-primary/80 px-6 pb-8 pt-12 text-primary-foreground shadow-lg">
         {/* Decorative circles */}
