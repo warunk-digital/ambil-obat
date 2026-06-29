@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/components/auth-provider";
 import { cn } from "@/lib/utils";
 import PwaRegister from "@/components/PwaRegister";
+import { NotificationProvider } from "@/components/NotificationProvider";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -39,7 +40,11 @@ export default function RootLayout({
     <html lang="id" suppressHydrationWarning className={cn("antialiased", geist.variable, "font-sans")}>
       <body className="min-h-svh">
         <ThemeProvider>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            <NotificationProvider>
+              {children}
+            </NotificationProvider>
+          </AuthProvider>
           <PwaRegister />
         </ThemeProvider>
       </body>

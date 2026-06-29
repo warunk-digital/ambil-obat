@@ -93,7 +93,7 @@ export default function ProfilePage() {
             />
             <div>
               <p className="text-sm font-medium">Sobat</p>
-              <p className="text-[11px] text-muted-foreground">Versi 1.0.0</p>
+              <p className="text-[11px] text-muted-foreground">Versi 2.1.0</p>
             </div>
           </div>
         </div>
