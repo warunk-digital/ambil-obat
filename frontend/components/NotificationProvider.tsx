@@ -72,13 +72,26 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
           if (newRequest.status !== oldRequest.status) {
             triggerInAppToast(newRequest.status, newRequest.request_number);
             
-            // Trigger browser notification if app is open but tab is unfocused
+            // Trigger browser notification if app is open but tab is unfocused (using Service Worker for mobile compatibility)
             if (document.hidden && Notification.permission === 'granted') {
               const info = getStatusInfo(newRequest.status);
-              new Notification(info.title, {
-                body: `${info.body} (No: ${newRequest.request_number})`,
-                icon: '/icon-192x192.png',
-              });
+              if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.ready.then((reg) => {
+                  reg.showNotification(info.title, {
+                    body: `${info.body} (No: ${newRequest.request_number})`,
+                    icon: '/icon-192x192.png',
+                    badge: '/icon-144x144.png',
+                    data: {
+                      url: `/orders/${newRequest.id}`
+                    }
+                  });
+                });
+              } else {
+                new Notification(info.title, {
+                  body: `${info.body} (No: ${newRequest.request_number})`,
+                  icon: '/icon-192x192.png',
+                });
+              }
             }
           }
         }
